@@ -41,6 +41,13 @@ public class FragmentGlobe extends Fragment {
         Globe
     }
 
+    public enum PressType {
+        Show,
+        Short,
+        Long,
+        None
+    }
+
     private Mode m_mode;
 
     private float m_sensitivity = .3f;
@@ -315,6 +322,14 @@ public class FragmentGlobe extends Fragment {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
+            m_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do something after 100ms
+                    setSelectedRegion(-1, PressType.None);
+                }
+            }, 300);
+
             if(m_mode != Mode.Idle) {
 
                 final float dx = distanceX * m_sensitivity;
@@ -334,6 +349,14 @@ public class FragmentGlobe extends Fragment {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 
+            m_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do something after 100ms
+                    setSelectedRegion(-1, PressType.None);
+                }
+            }, 300);
+
             if(m_mode != Mode.Idle) {
 
                 final float vx = m_sensitivity * velocityX;
@@ -351,6 +374,38 @@ public class FragmentGlobe extends Fragment {
         }
 
         @Override
+        public void onShowPress(MotionEvent e) {
+
+            final float x = e.getX();
+            final float y = e.getY();
+
+            m_glSurfaceView.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+
+                    int region = m_renderer_wrapper.getRegionFromPoint(m_picking_region_asset, x, y);
+                    setSelectedRegion(region, PressType.Show);
+                }
+            });
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+            final float x = e.getX();
+            final float y = e.getY();
+
+            m_glSurfaceView.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+
+                    int region = m_renderer_wrapper.getRegionFromPoint(m_picking_region_asset, x, y);
+                    setSelectedRegion(region, PressType.Long);
+                }
+            });
+        }
+
+        @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
 
             final float x = e.getX();
@@ -361,7 +416,7 @@ public class FragmentGlobe extends Fragment {
                 public void run() {
 
                     int region = m_renderer_wrapper.getRegionFromPoint(m_picking_region_asset, x, y);
-                    setSelectedRegion(region);
+                    setSelectedRegion(region, PressType.Short);
                 }
             });
 
@@ -379,6 +434,14 @@ public class FragmentGlobe extends Fragment {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
+
+            m_handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //Do something after 100ms
+                setSelectedRegion(-1, PressType.None);
+        }
+            }, 300);
 
             m_handler.post(new Runnable() {
                 @Override
@@ -426,9 +489,10 @@ public class FragmentGlobe extends Fragment {
         });
     }
 
-    public void setSelectedRegion(int region) {
+    public void setSelectedRegion(int region, PressType type) {
 
         final int f_region = region;
+        final int f_type = type.ordinal();
 
         m_handler.post(new Runnable() {
             @Override
@@ -436,6 +500,7 @@ public class FragmentGlobe extends Fragment {
 
                 Intent intent = new Intent("region_picked");
                 intent.putExtra("region", f_region);
+                intent.putExtra("type", f_type);
                 getActivity().sendBroadcast(intent);
             }
         });

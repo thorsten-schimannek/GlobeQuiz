@@ -111,11 +111,35 @@ public class FragmentQuestionFindArea extends FragmentQuestion {
                 m_current_question, m_total_questions));
     }
 
-    public void setSelectedRegion(int region) {
+    public void setSelectedRegion(int region, FragmentGlobe.PressType press_type) {
+
+        FragmentGlobe globeFragment = (FragmentGlobe) getActivity().getSupportFragmentManager()
+                .findFragmentByTag("globe");
+
+        globeFragment.clearForeground();
+
+       if(press_type == FragmentGlobe.PressType.Short ||
+               press_type == FragmentGlobe.PressType.None) {
+
+            globeFragment.clearForeground();
+        }
 
         if(region == -1) return;
 
-        unregisterBroadcastReceiver();
+        if(press_type == FragmentGlobe.PressType.Show) {
+
+            globeFragment.showAsset(m_question.getAssetFile(), region,
+                    new double[] {0.7f, .3f, 0.7f, 1.f});
+        }
+        else if(press_type == FragmentGlobe.PressType.Long) {
+
+            unregisterBroadcastReceiver();
+
+            answerSelected(region);
+        }
+    }
+
+    private void answerSelected(int region) {
 
         FragmentGlobe globeFragment = (FragmentGlobe) getActivity().getSupportFragmentManager()
                 .findFragmentByTag("globe");
@@ -129,17 +153,18 @@ public class FragmentQuestionFindArea extends FragmentQuestion {
 
             m_handler.postDelayed(new Runnable() {
                 @Override
-                public void run() { nextQuestion(true); }
+                public void run() {
+                    nextQuestion(true);
+                }
             }, 700);
 
         } else {
 
             globeFragment.showAsset(m_question.getAssetFile(), region,
-                    new double[] {1.f, 0.f, 0.f, 1.f});
+                    new double[]{1.f, 0.f, 0.f, 1.f});
 
             m_question.show((AppCompatActivity) getActivity());
             m_question.focus(globeFragment);
-
 
             String language = MainActivity.getGameData().getCurrentLanguage().getName();
             Resources resources = MainActivity.getResourcesByLocal(getContext(), language);
@@ -175,7 +200,14 @@ public class FragmentQuestionFindArea extends FragmentQuestion {
 
             if (intent.getAction() != null
                     && intent.getAction().equalsIgnoreCase("region_picked")) {
-                setSelectedRegion(intent.getIntExtra("region", -1));
+
+                int region = intent.getIntExtra("region", -1);
+
+                FragmentGlobe.PressType press_type = FragmentGlobe.PressType.values()[
+                            intent.getIntExtra("type", FragmentGlobe.PressType.Short.ordinal())
+                        ];
+
+                setSelectedRegion(region, press_type);
             }
         }
 
