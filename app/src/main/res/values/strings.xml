@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">GlobeQuiz</string>
+
+    <string name="log_tag">globequiz</string>
+
+    <string name="version">Version 0.0</string>
+
+    <string name="single_player">Start Game</string>
+    <string name="multi_player">Multiplayer</string>
+    <string name="globe_button_label">Globe</string>
+    <string name="settings">Settings</string>
+
+    <string name="start_single_player">Start game</string>
+    <string name="select_questions">Select Questions</string>
+    <string name="select_continent">Select Continents</string>
+    <string name="number_of_questions">Number of Questions</string>
+
+    <string name="logo_description">Logo showing pictogram of a globe</string>
+    <string name="map_description">Map indicating the location of the country</string>
+
+    <string name="level_too_low_format">You have to reach level %d to select this option.</string>
+
+    <string name="progress_format">%1$d of %2$d</string>
+    <string name="too_many_countries_format">Selected continents contain only %d countries</string>
+    <string name="select_a_question">Select at least one question</string>
+    <string name="select_a_continent">Select at least one continent</string>
+
+    <string name="next_question">Next question</string>
+    <string name="next_country">Next country</string>
+    <string name="next_score">Show score</string>
+    <string name="not_enough_questions">Sorry, there are no questions of these types for the selected continents.</string>
+
+    <string name="score_label">Score</string>
+    <string name="back_to_menu">Menu</string>
+
+    <string name="score_number_format">%1$d of %2$d answers correct - %3$.02f%%</string>
+    <string name="score_experience_gained_format">%1$d XP earned</string>
+    <string name="score_experience_format">%1$d of %2$d XP to level %3$d</string>
+
+    <string name="player_name_format">Player: %1$s</string>
+    <string name="player_experience_format">"Level %1$d - %2$d/%3$d XP</string>
+
+    <string name="evaluation1">Did you even try?</string>
+    <string name="evaluation2">You can tell east from west</string>
+    <string name="evaluation3">Average</string>
+    <string name="evaluation4">Quite good</string>
+    <string name="evaluation5">Impressive</string>
+    <string name="evaluation6">Flawless</string>
+
+    <string name="abort_game_warning">End the game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="please_enter_name">Please enter a name.</string>
+    <string name="player_already_exists">The player name already exists. Please enter another name.</string>
+
+    <string name="select_player">Select Player</string>
+    <string name="create_player">Create Player</string>
+    <string name="enter_player_name">Player name:</string>
+    <string name="create">Create</string>
+    <string name="default_player_name">GeoWizz9000</string>
+
+    <string name="remove_player_warning">Do you really want to delete player %1$s and loose all progress?</string>
+    <string name="language">Language:</string>
+    <string name="language_flag_description">Picture of a flag</string>
+
+    <string name="select_player_button">Change player</string>
+
+    <string name="wiki_button_description">Opens Wikipedia</string>
+    <string name="info_format">%1$s\nCapital: %2$s</string>
+    <string name="info_format_no_capital">%1$s</string>
+
+</resources>

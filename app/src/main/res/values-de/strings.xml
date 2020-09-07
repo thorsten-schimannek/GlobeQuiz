@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">GlobeQuiz</string>
+
+    <string name="log_tag">globequiz</string>
+
+    <string name="version">Version 0.0</string>
+
+    <string name="single_player">Starte Spiel</string>
+    <string name="multi_player">Multiplayer</string>
+    <string name="globe_button_label">Globus</string>
+    <string name="settings">Einstellungen</string>
+
+    <string name="start_single_player">Starte Spiel</string>
+    <string name="select_questions">Wähle Fragetypen</string>
+    <string name="select_continent">Wähle Kontinente</string>
+    <string name="number_of_questions">Anzahl der Fragen</string>
+
+    <string name="logo_description">Ein Piktogramm eines Globus.</string>
+    <string name="map_description">Ein Globus</string>
+
+    <string name="level_too_low_format">Du musst Level %d erreichen um diese Option wählen zu können.</string>
+
+    <string name="progress_format">%1$d von %2$d</string>
+    <string name="too_many_countries_format">Die gewählten Kontinente enthalten nur %d Länder</string>
+    <string name="select_a_question">Wähle wenigstens einen Fragetypen</string>
+    <string name="select_a_continent">Wähle wenigstens einen Kontinent</string>
+
+    <string name="next_question">Nächste Frage</string>
+    <string name="next_country">Nächstes Land</string>
+    <string name="next_score">Zur Punktzahl</string>
+    <string name="not_enough_questions">Sorry, es gibt keine Fragen dieses Typs für die gewählten Kontinente.</string>
+
+    <string name="score_label">Punktzahl</string>
+    <string name="back_to_menu">Menü</string>
+
+    <string name="score_number_format">%1$d von %2$d Antworten richtig - %3$.02f%%</string>
+    <string name="score_experience_gained_format">%1$d XP gewonnen</string>
+    <string name="score_experience_format">%1$d von %2$d XP bis Level %3$d</string>
+
+    <string name="player_name_format">Spieler: %1$s</string>
+    <string name="player_experience_format">"Level %1$d - %2$d/%3$d XP</string>
+
+    <string name="evaluation1">Das runde Ding war übrigens ein Globus</string>
+    <string name="evaluation2">Du kannst Osten von Westen unterscheiden</string>
+    <string name="evaluation3">Nicht großartig, nicht schrecklich</string>
+    <string name="evaluation4">Nicht schlecht</string>
+    <string name="evaluation5">Beeindruckend</string>
+    <string name="evaluation6">Perfekt</string>
+
+    <string name="abort_game_warning">Spiel beenden?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+
+    <string name="please_enter_name">Bitte wähle einen Spielernamen</string>
+    <string name="player_already_exists">Dieser Name existiert bereits. Bitte wähle einen anderen.</string>
+
+    <string name="select_player">Wähle einen Spieler</string>
+    <string name="create_player">Spieler erstellen</string>
+    <string name="enter_player_name">Spielername:</string>
+    <string name="create">Erstellen</string>
+    <string name="default_player_name">GeoWizz9000</string>
+
+    <string name="remove_player_warning">Möchtest du wirklich Spieler %1$s und sämtlichen Fortschritt löschen?</string>
+    <string name="language">Sprache:</string>
+    <string name="language_flag_description">Bild einer Flagge</string>
+
+    <string name="select_player_button">Spieler wechseln</string>
+
+    <string name="wiki_button_description">Öffnet Wikipedia</string>
+    <string name="info_format">%1$s\nHauptstadt: %2$s</string>
+    <string name="info_format_no_capital">%1$s</string>
+
+</resources>
