@@ -3,7 +3,7 @@
 
     <string name="log_tag">globequiz</string>
 
-    <string name="version">Version 0.0</string>
+    <string name="version">Version 0.1</string>
 
     <string name="single_player">Start Game</string>
     <string name="multi_player">Multiplayer</string>

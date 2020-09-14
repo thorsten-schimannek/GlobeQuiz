@@ -15,7 +15,7 @@ public class Player {
         add(3200);      // level  7
         add(6400);      // level  8
         add(12800);     // level  9
-        add(25600);     // level 10
+        add(25000);     // level 10
     }};
 
     private String m_name;
@@ -37,13 +37,16 @@ public class Player {
 
     public int getRequiredExperience(int level) {
 
-        return m_required_experience.get(level - 1);
+        int max = m_required_experience.size();
+
+        if(max <= level) return m_required_experience.get(level - 1);
+        else return m_required_experience.get(max - 1) + (max - level) * 5000;
     }
 
     public int getLevelFromExperience(int experience) {
 
         int level = 0;
-        for(int required : m_required_experience) if(experience >= required) level++;
+        while(getRequiredExperience(level + 1) >= experience) level++;
 
         return level;
     }
@@ -51,11 +54,7 @@ public class Player {
     public void setExperience(int exp) {
 
         m_experience = exp;
-
-        int level = 0;
-        for(int required : m_required_experience) if(exp >= required) level++;
-
-        m_level = level;
+        m_level = getLevelFromExperience(exp);
     }
 
     public void addExperience(int exp) { setExperience(m_experience + exp); }

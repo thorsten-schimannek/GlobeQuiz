@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
         ReceiverFragment rf = (ReceiverFragment) getSupportFragmentManager()
                 .findFragmentByTag("answer");
 
-        rf.unregisterBroadcastReceiver();
+        if(rf != null) rf.unregisterBroadcastReceiver();
 
         m_globe_fragment.setMode(FragmentGlobe.Mode.Idle);
         m_globe_fragment.clearForeground();
@@ -232,6 +232,12 @@ public class MainActivity extends AppCompatActivity {
 
                 int region = intent.getIntExtra("region", -1);
 
+                FragmentGlobe.PressType press_type = FragmentGlobe.PressType.values()[
+                        intent.getIntExtra("type", FragmentGlobe.PressType.Short.ordinal())
+                        ];
+
+                if(press_type != FragmentGlobe.PressType.Short) return;
+
                 m_globe_fragment.clearForeground();
 
                 RelativeLayout.LayoutParams layoutParams;
@@ -286,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             InputStream inStream = getAssets()
-                    .open("flags/" + Integer.toString(region) + ".png");
+                    .open("flags/" + region + ".png");
             Drawable d = Drawable.createFromStream(inStream, null);
             m_flag_imageview.setImageDrawable(d);
             inStream.close();

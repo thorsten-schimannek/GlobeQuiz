@@ -1,10 +1,10 @@
 {
   "questions_list": [
-    {"name": "Name of Country", "question_text": "Name of Country?", "levels": [ 1, 1, 1], "type": "select_value", "data_list": "countries_list", "answer": "name",
+    {"name": "Name of Country", "question_text": "Name of Country?", "levels": [ 1, 5, 8], "type": "select_value", "data_list": "countries_list", "answer": "name",
       "show": [
         {"type": "MapPolygons", "asset": "countries.triangles.jet", "color": [ 0.5, 1.0, 0.0, 1.0]}
       ]},
-    {"name": "Name of Capital", "question_text": "Capital of <name>?", "levels": [ 1, 2, 3], "type": "select_value", "data_list": "countries_list", "answer": "capital",
+    {"name": "Name of Capital", "question_text": "Capital of <name>?", "levels": [ 2, 6, 9], "type": "select_value", "data_list": "countries_list", "answer": "capital",
       "show": [
         {"type": "MapPolygons", "asset": "countries.triangles.jet", "color": [ 0.5, 1.0, 0.0, 1.0]},
         {"type": "MapPoints", "asset": "capitals.points.jet", "color": [ 1.0, 0.0, 0.0, 1.0]}
@@ -12,7 +12,7 @@
     {"name": "Country Location", "question_text": "Find <name>", "levels": [ 1], "type": "find_location_area", "data_list": "countries_list", "answer": "name",
       "region_asset": "countries.triangles.jet",
       "show": [{"type": "MapPolygons", "asset": "countries.triangles.jet", "color": [ 0.0, 1.0, 0.0, 1.0]}]},
-    {"name": "Country Flag", "question_text": "Name of Country?", "levels": [ 1, 2, 3], "type": "select_value", "data_list": "countries_list", "answer": "name",
+    {"name": "Country Flag", "question_text": "Name of Country?", "levels": [ 3, 7, 10], "type": "select_value", "data_list": "countries_list", "answer": "name",
       "show": [{"type": "Image", "asset": "flags"}], "except": [161, 162, 163, 164, 166, 226, 227, 229, 238, 241]}
   ],
   "continents_list": ["Africa", "Asia", "North America", "South America", "Europe", "Oceania", "Islands"],

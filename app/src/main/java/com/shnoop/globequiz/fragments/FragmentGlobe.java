@@ -63,7 +63,6 @@ public class FragmentGlobe extends Fragment {
     private RendererWrapper m_renderer_wrapper;
 
     private Handler m_handler;
-    private boolean m_picking_region = false;
     private String m_picking_region_asset;
 
     private Timer m_timer;
@@ -149,10 +148,14 @@ public class FragmentGlobe extends Fragment {
         m_scale_gesture_detector = new ScaleGestureDetector(getActivity(), m_scale_gesture_listener);
         m_scroll_gesture_detector = new GestureDetectorCompat(getActivity(), m_scroll_gesture_listener);
 
+        // it would be great to change mMinSpan (default 446) of m_scale_gesture_detector
+        // but there is no setter function. Perhaps use reflection?
+
         m_glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 if (event != null) {
 
                     m_scale_gesture_detector.onTouchEvent(event);
@@ -325,7 +328,7 @@ public class FragmentGlobe extends Fragment {
             m_handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //Do something after 100ms
+
                     setSelectedRegion(-1, PressType.None);
                 }
             }, 300);
@@ -352,7 +355,7 @@ public class FragmentGlobe extends Fragment {
             m_handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //Do something after 100ms
+
                     setSelectedRegion(-1, PressType.None);
                 }
             }, 300);
@@ -438,7 +441,7 @@ public class FragmentGlobe extends Fragment {
             m_handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //Do something after 100ms
+
                 setSelectedRegion(-1, PressType.None);
         }
             }, 300);
@@ -459,7 +462,6 @@ public class FragmentGlobe extends Fragment {
     public void pickRegion(String region_asset) {
 
         m_picking_region_asset = region_asset;
-        m_picking_region = true;
     }
 
     public void zoomTo(float zoom) {
