@@ -33,6 +33,7 @@ public class FragmentMainMenu extends Fragment {
     private Button m_button_single_player;
     private Button m_button_globe;
     private Button m_button_settings;
+    private Button m_button_about;
 
     private TextView m_player_name;
     private TextView m_player_experience;
@@ -56,10 +57,12 @@ public class FragmentMainMenu extends Fragment {
         m_button_single_player = view.findViewById(R.id.singlePlayerButton);
         m_button_globe = view.findViewById(R.id.globeButton);
         m_button_settings = view.findViewById(R.id.settingsButton);
+        m_button_about = view.findViewById(R.id.aboutButton);
 
         m_button_single_player.setOnClickListener(singlePlayerButtonListener);
         m_button_globe.setOnClickListener(globeButtonListener);
         m_button_settings.setOnClickListener(settingsButtonListener);
+        m_button_about.setOnClickListener(aboutButtonListener);
 
         m_player_name = view.findViewById(R.id.textViewPlayerName);
         m_player_experience = view.findViewById(R.id.textViewPlayerLevel);
@@ -197,10 +200,22 @@ public class FragmentMainMenu extends Fragment {
     private View.OnClickListener settingsButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             FragmentSettings settings = new FragmentSettings();
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.remove(m_this);
             transaction.add(R.id.fragmentContainer, settings).addToBackStack(null).commit();
+        }
+    };
+
+    private View.OnClickListener aboutButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            FragmentAbout about = new FragmentAbout();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.remove(m_this);
+            transaction.add(R.id.fragmentContainer, about).addToBackStack(null).commit();
         }
     };
 }

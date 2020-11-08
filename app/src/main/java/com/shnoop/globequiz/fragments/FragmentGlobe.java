@@ -214,16 +214,18 @@ public class FragmentGlobe extends Fragment {
             } }, 0, 500);
     }
 
+    private void stopSpinning() {
+
+        if(m_timer != null) m_timer.cancel();
+        m_timer = null;
+    }
+
     public void setMode(Mode mode) {
 
         m_mode = mode;
 
         if(mode == Mode.Idle) startSpinning();
-        else {
-
-            m_timer.cancel();
-            m_timer = null;
-        }
+        else stopSpinning();
     }
 
     public Mode getMode() { return m_mode; }

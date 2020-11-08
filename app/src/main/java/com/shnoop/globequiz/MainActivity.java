@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         m_game_state = new GameState();
         m_player_manager = new PlayerManager(this);
 
-        m_game_data = new GameData(this, "languages.json");
+        m_game_data = new GameData(this,
+                "languages_data.json", "game_data.json");
 
         String language;
         if(m_player_manager.getState() == PlayerManager.PlayerManagerState.PLAYER_SELECTED) {

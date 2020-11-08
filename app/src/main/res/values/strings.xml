@@ -12,7 +12,7 @@
 
     <string name="start_single_player">Start game</string>
     <string name="select_questions">Select Questions</string>
-    <string name="select_continent">Select Continents</string>
+    <string name="select_regions">Select Regions</string>
     <string name="number_of_questions">Number of Questions</string>
 
     <string name="logo_description">Logo showing pictogram of a globe</string>
@@ -23,7 +23,7 @@
     <string name="progress_format">%1$d of %2$d</string>
     <string name="too_many_countries_format">Selected continents contain only %d countries</string>
     <string name="select_a_question">Select at least one question</string>
-    <string name="select_a_continent">Select at least one continent</string>
+    <string name="select_a_region">Select at least one region</string>
 
     <string name="next_question">Next question</string>
     <string name="next_country">Next country</string>
@@ -69,5 +69,33 @@
     <string name="wiki_button_description">Opens Wikipedia</string>
     <string name="info_format">%1$s\nCapital: %2$s</string>
     <string name="info_format_no_capital">%1$s</string>
-
+    <string name="about_button">About</string>
+    <string name="license_text_label">Licenses</string>
+    <string name="author_text_label">by Thorsten Schimannek</string>
+    <string name="email_text_label">globequiz.contact@gmail.com</string>
+    <string name="happy_bunny_formatted" translatable="false"><![CDATA[
+    <b>OpenGL Mathematics (GLM)</b><br>
+    GLM is licensed under The Happy Bunny License and MIT License<br>
+    <br>
+    <b>The Happy Bunny License<br>(Modified MIT License)</b><br>
+    Copyright (c) 2005 - 2014 G-Truc Creation<br>
+    <br>
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br>
+    <br>
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br>
+    <br>
+    Restrictions:<br>
+    By making use of the Software for military purposes, you choose to make a Bunny unhappy.<br>
+    <br>
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br>
+    <br>
+    <b>The MIT License</b><br>
+    Copyright (c) 2005 - 2014 G-Truc Creation<br>
+    <br>
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br>
+    <br>
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br>
+    <br>
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+]]></string>
 </resources>

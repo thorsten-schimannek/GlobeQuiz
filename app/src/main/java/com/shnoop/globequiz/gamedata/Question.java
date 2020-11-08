@@ -10,7 +10,7 @@ public abstract class Question {
     protected QuestionType.Mode m_mode;
     protected int m_type_index;
     protected int m_data_index;
-    protected String m_continent;
+    protected int m_region_index;
 
     protected double m_center_latitude;
     protected double m_center_longitude;
@@ -21,14 +21,15 @@ public abstract class Question {
 
     int m_experience;
 
-    public Question(String questionText, int typeIndex, int dataIndex, String continent, QuestionType.Mode mode,
-                    double longitude, double latitude, double boundingDiameter, int experience){
+    public Question(String questionText, int typeIndex, int dataIndex, int regionIndex,
+                    QuestionType.Mode mode, double longitude, double latitude,
+                    double boundingDiameter, int experience){
 
         m_question_text = questionText;
 
         m_type_index = typeIndex;
         m_data_index = dataIndex;
-        m_continent = continent;
+        m_region_index = regionIndex;
         m_mode = mode;
         m_center_longitude = longitude;
         m_center_latitude = latitude;
@@ -74,7 +75,7 @@ public abstract class Question {
     public QuestionType.Mode getMode() { return m_mode; }
     public int getTypeIndex() { return m_type_index; }
     public int getDataIndex() { return m_data_index; }
-    public String getContinent() { return m_continent; }
+    public int getRegionIndex() { return m_region_index; }
     public double getLongitude() { return m_center_longitude; }
     public double getLatitude() { return m_center_latitude; }
     public int getExperience() { return m_experience; }

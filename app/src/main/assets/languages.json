@@ -1,6 +1,0 @@
-{
-  "languages" : [
-{"name": "en", "data": "game_data_en.json", "flag": "flags/31.png"},
-{"name": "de", "data": "game_data_de.json", "flag": "flags/156.png"}
-    ]
-}

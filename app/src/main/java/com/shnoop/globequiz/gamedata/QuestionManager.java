@@ -17,9 +17,11 @@ public class QuestionManager {
         m_question_types = new ArrayList<>();
     }
 
-    public void registerQuestionType(JSONObject gameData, JSONObject questionType) {
+    public void registerQuestionType(JSONObject gameData, JSONObject strings,
+                                     JSONObject questionType) {
 
-        m_question_types.add(new QuestionType(m_question_types.size(), gameData, questionType));
+        m_question_types.add(new QuestionType(m_question_types.size(), gameData,
+                strings, questionType));
     }
 
     public int getTypeNumber() { return m_question_types.size(); }
@@ -33,12 +35,12 @@ public class QuestionManager {
         return questions;
     }
 
-    public List<Question> getQuestions(int number, List<String> continents, List<Integer> types) {
+    public List<Question> getQuestions(int number, List<Integer> regions, List<Integer> types) {
 
         List<Question> fullQuestionList = new ArrayList<>();
-        Set<String> continentsSet = new HashSet<>(continents);
+        Set<Integer> regionsSet = new HashSet<>(regions);
 
-        // first get all questions with one of the selected types and continents
+        // first get all questions with one of the selected types and regions
         for(int typeIndex : types) {
 
             QuestionType type = m_question_types.get(typeIndex);
@@ -46,7 +48,7 @@ public class QuestionManager {
             for(int i = 0; i < type.getQuestionNumber(); i++){
 
                Question question = type.getQuestion(i);
-               if(continentsSet.contains(question.getContinent())) fullQuestionList.add(question);
+               if(regionsSet.contains(question.getRegionIndex())) fullQuestionList.add(question);
             }
         }
 

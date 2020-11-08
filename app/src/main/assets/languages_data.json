@@ -1,0 +1,6 @@
+{
+  "languages" : [
+{"name": "en", "data": "strings_en.json", "flag": "flags/31.png"},
+{"name": "de", "data": "strings_de.json", "flag": "flags/156.png"}
+    ]
+}

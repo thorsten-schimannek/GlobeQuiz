@@ -20,7 +20,9 @@
         android:layout_margin="16dp"
         android:gravity="center_horizontal"
         android:text="@string/select_questions"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold" />
 
     <ListView
         android:id="@+id/questionsListView"
@@ -35,11 +37,13 @@
         android:layout_margin="16dp"
         android:layout_weight="0"
         android:gravity="center_horizontal"
-        android:text="@string/select_continent"
-        android:textAlignment="center" />
+        android:text="@string/select_regions"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold" />
 
     <ListView
-        android:id="@+id/continentsListView"
+        android:id="@+id/regionsListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
@@ -53,7 +57,9 @@
         android:layout_weight="0"
         android:gravity="center_horizontal"
         android:text="@string/number_of_questions"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"

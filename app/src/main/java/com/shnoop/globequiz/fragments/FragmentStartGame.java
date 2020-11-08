@@ -23,6 +23,7 @@ import com.shnoop.globequiz.customadapters.QuestionListItem;
 import com.shnoop.globequiz.customadapters.QuestionsAdapter;
 import com.shnoop.globequiz.gamedata.Question;
 import com.shnoop.globequiz.gamedata.QuestionManager;
+import com.shnoop.globequiz.gamedata.Region;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +32,15 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
 
     private Button m_start_game_button;
     private TextView m_select_questions_textview;
-    private TextView m_select_continents_textview;
+    private TextView m_select_regions_textview;
     private TextView m_number_of_questions_text_textview;
     private TextView m_number_of_questions_number_textview;
     private SeekBar m_number_of_questions_seekbar;
     private ListView m_questions_listview;
-    private ListView m_continents_listview;
+    private ListView m_regions_listview;
 
-    private List<String> m_continents_arraylist;
-    private ArrayAdapter<String> m_continents_arrayadapter;
+    private List<String> m_regions_arraylist;
+    private ArrayAdapter<String> m_regions_arrayadapter;
 
     private ArrayList<QuestionListItem> m_questions_list;
     private QuestionsAdapter m_questions_adapter;
@@ -64,12 +65,12 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
         // Store the Views that have to be accessed later
         m_start_game_button = view.findViewById(R.id.startSinglePlayerButton);
         m_select_questions_textview = view.findViewById(R.id.selectQuestionsTextView);
-        m_select_continents_textview = view.findViewById(R.id.selectContinentTextView);
+        m_select_regions_textview = view.findViewById(R.id.selectContinentTextView);
         m_number_of_questions_text_textview = view.findViewById(R.id.selectNumberOfQuestionsTextView);
         m_number_of_questions_number_textview = view.findViewById(R.id.numberOfQuestionsTextView);
         m_number_of_questions_seekbar = view.findViewById(R.id.numberOfQuestionsSeekBar);
         m_questions_listview = view.findViewById(R.id.questionsListView);
-        m_continents_listview = view.findViewById(R.id.continentsListView);
+        m_regions_listview = view.findViewById(R.id.regionsListView);
 
         // Set start Button listener
         m_start_game_button.setOnClickListener(startGameButtonListener);
@@ -80,17 +81,20 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
         m_number_of_questions_number_textview.setText(Integer.toString(calculateProgress(2)));
 
         // Fill the continents into the corresponding ListView
-        m_continents_arraylist = MainActivity.getGameData().getContinents();
+        List<Region> regions = MainActivity.getGameData().getRegions();
 
-        m_continents_arrayadapter = new ArrayAdapter<>(getContext(),
+        m_regions_arraylist = new ArrayList<>();
+        for(Region region : regions) m_regions_arraylist.add(region.getName());
+
+        m_regions_arrayadapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_multiple_choice,
-                m_continents_arraylist);
+                m_regions_arraylist);
 
-        m_continents_listview.setAdapter(m_continents_arrayadapter);
-        m_continents_listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        m_regions_listview.setAdapter(m_regions_arrayadapter);
+        m_regions_listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        for(int i = 0; i < m_continents_listview.getCount(); i++) {
-            m_continents_listview.setItemChecked(i, true);
+        for(int i = 0; i < m_regions_listview.getCount(); i++) {
+            m_regions_listview.setItemChecked(i, true);
         }
 
         // Fill the questions into the corresponding ListView.
@@ -130,7 +134,7 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
         Resources resources = MainActivity.getResourcesByLocal(context, language);
 
         m_select_questions_textview.setText(resources.getString(R.string.select_questions));
-        m_select_continents_textview.setText(resources.getString(R.string.select_continent));
+        m_select_regions_textview.setText(resources.getString(R.string.select_regions));
         m_number_of_questions_text_textview.setText(resources.getString(R.string.number_of_questions));
         m_start_game_button.setText(resources.getString(R.string.start_single_player));
     }
@@ -142,20 +146,21 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
             // Get number of countries to show in this game
             int numberQuestions = calculateProgress(m_number_of_questions_seekbar.getProgress());
 
-            // Get checked continents from ListView
-            List<String> continents = new ArrayList<>();
+            // Get checked regions from ListView
+            List<Integer> regions = new ArrayList<>();
 
-            SparseBooleanArray checked_continents = m_continents_listview.getCheckedItemPositions();
+            SparseBooleanArray checked_regions = m_regions_listview.getCheckedItemPositions();
 
-            for(int i = 0; i < m_continents_arrayadapter.getCount(); i++){
-                if(checked_continents.get(i)){
-                    continents.add(m_continents_arrayadapter.getItem(i));
-                }
-            }
+            for(int i = 0; i < m_regions_arrayadapter.getCount(); i++)
+                if(checked_regions.get(i)) regions.add(i);
 
-            if(continents.size() == 0){
+            String language = MainActivity.getGameData().getCurrentLanguage().getName();
+            Resources resources = MainActivity.getResourcesByLocal(getContext(), language);
+
+            if(regions.size() == 0){
+
                 Toast.makeText(getContext(),
-                        getResources().getString(R.string.select_a_continent),
+                        resources.getString(R.string.select_a_region),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -172,18 +177,18 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
 
             if(types.size() == 0){
                 Toast.makeText(getContext(),
-                        getResources().getString(R.string.select_a_question),
+                        resources.getString(R.string.select_a_question),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Get selected number of questions from the selected types
             QuestionManager questionManager = MainActivity.getGameData().getQuestionManager();
-            List<Question> questions = questionManager.getQuestions(numberQuestions, continents, types);
+            List<Question> questions = questionManager.getQuestions(numberQuestions, regions, types);
 
             if(questions.size() == 0){
                 Toast.makeText(getContext(),
-                        getResources().getString(R.string.not_enough_questions),
+                        resources.getString(R.string.not_enough_questions),
                         Toast.LENGTH_SHORT).show();
                 return;
             }

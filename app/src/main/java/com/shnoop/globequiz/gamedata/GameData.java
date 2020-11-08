@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.shnoop.globequiz.MainActivity;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,19 +21,23 @@ public class GameData {
     private ArrayList<Language> m_languages;
     private Language m_current_language;
 
+    private String m_game_data_file;
+
     private QuestionManager m_question_manager;
     private List<Country> m_countries;
-    private List<String> m_continents;
+    private List<Region> m_regions;
 
-    public GameData(Context context, String languageDataFile) {
+    public GameData(Context context, String languageDataFile, String gameDataFile) {
+
+        m_game_data_file = gameDataFile;
 
         loadLanguages(context, languageDataFile);
         setCurrentLanguage(context, "en");
     }
 
-    public List<String> getContinents() {
+    public List<Region> getRegions() {
 
-        return m_continents;
+        return m_regions;
     }
 
     public List<Country> getCountries() {
@@ -64,10 +65,10 @@ public class GameData {
 
                 JSONObject language = languages.getJSONObject(i);
                 String name = language.getString("name");
-                String game_data_file = language.getString("data");
+                String strings_file = language.getString("data");
                 String flag_file = language.getString("flag");
 
-                m_languages.add(new Language(name, game_data_file, flag_file));
+                m_languages.add(new Language(name, strings_file, flag_file));
             }
         }
         catch(JSONException exception){
@@ -77,31 +78,43 @@ public class GameData {
 
     public void loadLists(Context context) {
 
-        String gameDataFile = m_current_language.getGameDataFile();
+        String stringsFile = m_current_language.getStringsFile();
 
         m_question_manager = new QuestionManager();
         m_countries = new ArrayList<>();
-        m_continents = new ArrayList<>();
+        m_regions = new ArrayList<>();
 
-        String game_data_json_string = loadFile(context, gameDataFile);
+        String game_data_json_string = loadFile(context, m_game_data_file);
+        String string_data_json_string = loadFile(context, stringsFile);
 
         try {
             JSONObject game_data_json = new JSONObject(game_data_json_string);
+            JSONObject strings_json = new JSONObject(string_data_json_string);
 
-            JSONArray continents_json = game_data_json.getJSONArray("continents_list");
-            for (int index = 0; index < continents_json.length(); index++) m_continents.add(continents_json.getString(index));
+            JSONArray regions_json = game_data_json.getJSONArray("regions_list");
+            JSONObject regions_strings_json = strings_json.getJSONObject("regions_list");
+            for (int index = 0; index < regions_json.length(); index++) {
+
+                JSONObject region = regions_json.getJSONObject(index);
+
+                m_regions.add(new Region(region, regions_strings_json));
+            }
 
             JSONArray questions_json = game_data_json.getJSONArray("questions_list");
-            for (int index = 0; index < questions_json.length(); index++)
-                m_question_manager.registerQuestionType(game_data_json, questions_json.getJSONObject(index));
+            for (int index = 0; index < questions_json.length(); index++) {
+
+                JSONObject question_type = questions_json.getJSONObject(index);
+
+                m_question_manager.registerQuestionType(game_data_json, strings_json, question_type);
+            }
 
             JSONArray countries_json = game_data_json.getJSONArray("countries_list");
-
+            JSONObject countries_strings_json = strings_json.getJSONObject("countries_list");
             for (int index = 0; index < countries_json.length(); index++) {
 
                 JSONObject country = countries_json.getJSONObject(index);
 
-                m_countries.add(new Country(country));
+                m_countries.add(new Country(country, countries_strings_json));
             }
         }
         catch(JSONException exception){

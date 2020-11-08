@@ -37,16 +37,18 @@ public class Player {
 
     public int getRequiredExperience(int level) {
 
+        if(level < 0) return 0;
+
         int max = m_required_experience.size();
 
-        if(max <= level) return m_required_experience.get(level - 1);
+        if(max >= level) return m_required_experience.get(level - 1);
         else return m_required_experience.get(max - 1) + (max - level) * 5000;
     }
 
     public int getLevelFromExperience(int experience) {
 
         int level = 0;
-        while(getRequiredExperience(level + 1) >= experience) level++;
+        while(getRequiredExperience(level + 1) <= experience) level++;
 
         return level;
     }

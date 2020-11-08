@@ -29,15 +29,19 @@ public class QuestionType {
     private List<ShowType> m_show_types;
     private List<Question> m_questions;
 
-    public QuestionType(int index, JSONObject gameData, JSONObject questionType) {
+    public QuestionType(int index, JSONObject gameData, JSONObject strings,
+                        JSONObject questionType) {
 
         m_show_types = new ArrayList<>();
         m_questions = new ArrayList<>();
 
         try {
 
-            m_name = questionType.getString("name");
-            m_question_text = questionType.getString("question_text");
+            m_name = strings.getJSONObject("questions_list").getJSONArray("name")
+                    .getString(questionType.getInt("name"));
+
+            m_question_text = strings.getJSONObject("questions_list").getJSONArray("question_text")
+                    .getString(questionType.getInt("question_text"));
 
             JSONArray levels = questionType.getJSONArray("levels");
             if(levels.length() == 3) {
@@ -65,15 +69,18 @@ public class QuestionType {
             }
 
             JSONArray questionArray = gameData.getJSONArray(questionType.getString("data_list"));
+            JSONObject questionStrings = strings.getJSONObject(questionType.getString("data_list"));
 
             switch(questionType.getString("type")) {
                 case "select_value":
                     m_mode = Mode.SELECT_VALUE;
-                    parseSelectValueQuestions(index, questionType, questionArray, exceptions);
+                    parseSelectValueQuestions(index, questionType, questionArray, questionStrings,
+                            exceptions);
                     break;
                 case "find_location_area":
                     m_mode = Mode.FIND_LOCATION_AREA;
-                    parseFindAreaQuestions(index, questionType, questionArray, exceptions);
+                    parseFindAreaQuestions(index, questionType, questionArray, questionStrings,
+                            exceptions);
                     break;
                 case "find_location_point":
                     m_mode = Mode.FIND_LOCATION_POINT; // TODO: implement
@@ -93,10 +100,12 @@ public class QuestionType {
     }
 
     private void parseSelectValueQuestions(int index, JSONObject questionType,
-                                           JSONArray questionArray, Set<Integer> exceptions)
+                                           JSONArray questionArray, JSONObject questionStrings,
+                                           Set<Integer> exceptions)
             throws org.json.JSONException {
 
-        String answer = questionType.getString("answer");
+        String answerKey = questionType.getString("answer");
+
         Set<String> substitutionKeys = getSubstitutionKeys(m_question_text);
 
         for(int i = 0; i < questionArray.length(); i++) {
@@ -105,18 +114,24 @@ public class QuestionType {
 
             String questionText = m_question_text;
             for(String key : substitutionKeys) {
-                questionText = questionText.replace("<" + key + ">",
-                        questionObject.getString(key));
+
+                String value = questionStrings.getJSONArray(key)
+                        .getString(questionObject.getInt(key));
+
+                questionText = questionText.replace("<" + key + ">", value);
             }
 
             int id = questionObject.getInt("id");
 
-            if(questionObject.has(answer) && !exceptions.contains(id)) {
+            if(questionObject.has(answerKey) && !exceptions.contains(id)) {
+
+                String answer = questionStrings.getJSONArray(answerKey)
+                        .getString(questionObject.getInt(answerKey));
 
                 QuestionSelectValue question = new QuestionSelectValue(
                         questionText, index, id,
-                        questionObject.getString("continent"),
-                        questionObject.getString(answer),
+                        questionObject.getInt("region"),
+                        answer,
                         questionObject.getDouble("longitude"),
                         questionObject.getDouble("latitude"),
                         questionObject.getDouble("bounding_diameter"),
@@ -128,7 +143,8 @@ public class QuestionType {
     }
 
     private void parseFindAreaQuestions(int index, JSONObject questionType,
-                                        JSONArray questionArray, Set<Integer> exceptions)
+                                        JSONArray questionArray, JSONObject questionStrings,
+                                        Set<Integer> exceptions)
             throws org.json.JSONException {
 
         Set<String> substitutionKeys = getSubstitutionKeys(m_question_text);
@@ -141,8 +157,11 @@ public class QuestionType {
 
             String questionText = m_question_text;
             for(String key : substitutionKeys) {
-                questionText = questionText.replace("<" + key + ">",
-                        questionObject.getString(key));
+
+                String value = questionStrings.getJSONArray(key)
+                        .getString(questionObject.getInt(key));
+
+                questionText = questionText.replace("<" + key + ">", value);
             }
 
             int id = questionObject.getInt("id");
@@ -151,7 +170,7 @@ public class QuestionType {
 
                 QuestionFindArea question = new QuestionFindArea(
                         questionText, index, id,
-                        questionObject.getString("continent"),
+                        questionObject.getInt("region"),
                         regionAsset,
                         questionObject.getDouble("longitude"),
                         questionObject.getDouble("latitude"),
