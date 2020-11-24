@@ -11,16 +11,10 @@
 #include <tuple>
 #include <string>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 #include "log.h"
-
-#define UNIFORM_MATRIX      "u_ViewProjectionMatrix"
-#define UNIFORM_ROTATION    "u_RotationMatrix"
-#define UNIFORM_ZOOM       "u_Zoom"
-#define UNIFORM_COLOR       "u_Color"
-#define UNIFORM_DIRECT      "u_directRendering"
 
 class ShaderProgram {
 
@@ -40,6 +34,12 @@ public:
     void setDirectRendering(bool direct);
 
 protected:
+
+    static constexpr auto UNIFORM_MATRIX = "u_ViewProjectionMatrix";
+    static constexpr auto UNIFORM_ROTATION = "u_RotationMatrix";
+    static constexpr auto UNIFORM_ZOOM = "u_Zoom";
+    static constexpr auto UNIFORM_COLOR = "u_Color";
+    static constexpr auto UNIFORM_DIRECT = "u_directRendering";
 
     int m_program {0};
 

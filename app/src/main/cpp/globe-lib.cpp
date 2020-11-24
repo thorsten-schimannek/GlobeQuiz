@@ -36,6 +36,28 @@ extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_show
     return;
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_setReliefTexture(
+        JNIEnv *env, jobject object, jstring file) {
+
+    // Convert filename to std::string
+    jboolean isCopy;
+    const char *convertedValue = (env)->GetStringUTFChars(file, &isCopy);
+    std::string filename = std::string(convertedValue);
+    (env)->ReleaseStringUTFChars(file, convertedValue);
+
+    if(renderer) renderer->setReliefTexture(filename);
+
+    return;
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_hideReliefTexture(
+        JNIEnv *env, jobject object) {
+
+    if(renderer) renderer->hideReliefTexture();
+
+    return;
+}
+
 extern "C" JNIEXPORT jint JNICALL Java_com_shnoop_globequiz_RendererWrapper_getRegionFromPoint(
         JNIEnv *env, jobject object, jstring file, jfloat x, jfloat y) {
 

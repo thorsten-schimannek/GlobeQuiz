@@ -1,7 +1,9 @@
 package com.shnoop.globequiz.player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Player {
 
@@ -23,11 +25,17 @@ public class Player {
     private int m_level;
     private String m_language;
 
+    private Map<String, Integer> m_extra_data_integers;
+    private Map<String, String> m_extra_data_strings;
+
     public Player(String name, int exp, String language) {
 
         m_name = name;
         m_language = language;
         setExperience(exp);
+
+        m_extra_data_integers = new HashMap<>();
+        m_extra_data_strings = new HashMap<>();
     }
 
     public String getName() { return m_name; }
@@ -62,4 +70,13 @@ public class Player {
     public void addExperience(int exp) { setExperience(m_experience + exp); }
 
     public void setLanguage(String language) { m_language = language; }
+
+    public void addStringData(String key, String value) { m_extra_data_strings.put(key, value); }
+    public void addIntegerData(String key, Integer value) { m_extra_data_integers.put(key, value); }
+
+    public Map<String, String> getStringData() { return m_extra_data_strings; }
+    public Map<String, Integer> getIntegerData() { return m_extra_data_integers; }
+
+    public String getStringData(String key) { return m_extra_data_strings.get(key); }
+    public Integer getIntegerData(String key) { return m_extra_data_integers.get(key); }
 }

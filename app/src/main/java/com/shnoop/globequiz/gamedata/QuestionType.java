@@ -1,6 +1,8 @@
 package com.shnoop.globequiz.gamedata;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
+
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -12,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +22,7 @@ import java.util.regex.Pattern;
 public class QuestionType {
 
     public enum Mode {
-        SELECT_VALUE, FIND_LOCATION_AREA, FIND_LOCATION_POINT
+        SELECT_VALUE, FIND_LOCATION_AREA
     }
 
     private String m_name;
@@ -27,15 +30,22 @@ public class QuestionType {
     private int[] m_levels;
     private Mode m_mode;
     private List<ShowType> m_show_types;
-    private List<Question> m_questions;
+    private List<List<Question>> m_questions;
 
-    public QuestionType(int index, JSONObject gameData, JSONObject strings,
-                        JSONObject questionType) {
+    private List<Pair<Integer, Integer>> m_data_to_question_index;
+
+    public QuestionType(int index, JSONObject questionType,
+                        JSONObject gameData, JSONObject strings) {
 
         m_show_types = new ArrayList<>();
         m_questions = new ArrayList<>();
+        m_data_to_question_index = new ArrayList<>();
 
         try {
+
+            int num_regions = gameData.getJSONArray("regions_list").length();
+            for(int i = 0; i < num_regions; i++)
+                m_questions.add(new ArrayList<Question>());
 
             m_name = strings.getJSONObject("questions_list").getJSONArray("name")
                     .getString(questionType.getInt("name"));
@@ -82,9 +92,6 @@ public class QuestionType {
                     parseFindAreaQuestions(index, questionType, questionArray, questionStrings,
                             exceptions);
                     break;
-                case "find_location_point":
-                    m_mode = Mode.FIND_LOCATION_POINT; // TODO: implement
-                    break;
                 default:
                     throw new JSONException("Invalid question type.");
             }
@@ -125,19 +132,26 @@ public class QuestionType {
 
             if(questionObject.has(answerKey) && !exceptions.contains(id)) {
 
+                int region_id = questionObject.getInt("region");
+                List<Question> questions = m_questions.get(region_id);
+
                 String answer = questionStrings.getJSONArray(answerKey)
                         .getString(questionObject.getInt(answerKey));
 
                 QuestionSelectValue question = new QuestionSelectValue(
-                        questionText, index, id,
-                        questionObject.getInt("region"),
+                        questionText, index, id, region_id,
+                        questions.size(),
                         answer,
                         questionObject.getDouble("longitude"),
                         questionObject.getDouble("latitude"),
                         questionObject.getDouble("bounding_diameter"),
                         5);
 
-                m_questions.add(question);
+                m_data_to_question_index.add(new Pair<>(region_id, questions.size()));
+                questions.add(question);
+            }
+            else {
+                m_data_to_question_index.add(new Pair<>(-1,-1));
             }
         }
     }
@@ -168,16 +182,23 @@ public class QuestionType {
 
             if(!exceptions.contains(id)) {
 
+                int region_id = questionObject.getInt("region");
+                List<Question> questions = m_questions.get(region_id);
+
                 QuestionFindArea question = new QuestionFindArea(
-                        questionText, index, id,
-                        questionObject.getInt("region"),
+                        questionText, index, id, region_id,
+                        questions.size(),
                         regionAsset,
                         questionObject.getDouble("longitude"),
                         questionObject.getDouble("latitude"),
                         questionObject.getDouble("bounding_diameter"),
                         5);
 
-                m_questions.add(question);
+                m_data_to_question_index.add(new Pair<>(region_id, questions.size()));
+                questions.add(question);
+            }
+            else {
+                m_data_to_question_index.add(new Pair<>(-1,-1));
             }
         }
     }
@@ -199,11 +220,16 @@ public class QuestionType {
     // If there are not enough questions of this type then it returns all questions of this type.
     public List<Question> getClosest(Question question, int number) {
 
+        List<Question> all_questions = new ArrayList<>();
+        for(List<Question> region : m_questions)
+            for(Question q : region)
+                all_questions.add(q);
+
         List<Integer> indices = new ArrayList<>();
-        for(int i = 0; i < m_questions.size(); i++) indices.add(i);
+        for(int i = 0; i < all_questions.size(); i++) indices.add(i);
 
         final List<Double> distances = new ArrayList<>();
-        for(Question otherQuestion : m_questions) distances.add(question.getDistance(otherQuestion));
+        for(Question otherQuestion : all_questions) distances.add(question.getDistance(otherQuestion));
 
         Collections.sort(indices, new Comparator<Integer>() {
 
@@ -214,15 +240,13 @@ public class QuestionType {
             }
         });
 
-        Integer questionIndex = m_questions.indexOf(question);
+        Integer questionIndex = all_questions.indexOf(question);
         indices.remove(questionIndex);
 
         List<Question> questions =  new ArrayList<>();
 
-        for(int i = 0; (i < number) && (i < indices.size()); i++) {
-
-            questions.add(m_questions.get(indices.get(i)));
-        }
+        for(int i = 0; (i < number) && (i < indices.size()); i++)
+            questions.add(all_questions.get(indices.get(i)));
 
         return questions;
     }
@@ -233,9 +257,16 @@ public class QuestionType {
     }
 
     public String getName() { return m_name; }
-    public String getQuestionText() { return m_question_text; }
     public int[] getLevels() { return m_levels; }
     public Mode getType() { return m_mode; }
-    public Question getQuestion(int index) { return m_questions.get(index); }
-    public int getQuestionNumber() { return m_questions.size(); }
+    public List<List<Question>> getQuestions() { return m_questions; }
+
+    public Question getQuestionFromDataIndex(int dataIndex) {
+
+        Pair<Integer, Integer> index = m_data_to_question_index.get(dataIndex);
+
+        if(index.first == -1 || index.second == -1) return null;
+
+        return m_questions.get(index.first).get(index.second);
+    }
 }

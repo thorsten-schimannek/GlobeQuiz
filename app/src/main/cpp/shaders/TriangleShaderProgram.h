@@ -7,11 +7,9 @@
 
 #include <string>
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "ShaderProgram.h"
-
-#define ATTRIBUTE_POSITION  "a_Position"
 
 class TriangleShaderProgram : public ShaderProgram{
 
@@ -23,6 +21,8 @@ class TriangleShaderProgram : public ShaderProgram{
         GLint getPositionAttributeLocation();
 
     protected:
+
+        static constexpr auto ATTRIBUTE_POSITION = "a_Position";
 
         // Positions - Vertex Shader
         GLint m_attribute_position;

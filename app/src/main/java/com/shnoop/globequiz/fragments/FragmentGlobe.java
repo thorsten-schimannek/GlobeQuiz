@@ -9,8 +9,8 @@ import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GestureDetectorCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.view.GestureDetectorCompat;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -185,6 +185,8 @@ public class FragmentGlobe extends Fragment {
                m_renderer_wrapper.show(0, "countries.triangles.jet", -1, new double[]{1., .63, .47, 1.});
                m_renderer_wrapper.show(2, "land_boundaries.lines.jet", -1, new double[]{0.3, 0.3, 0.3, 1.});
                m_renderer_wrapper.show(2, "long_lat_lines.lines.jet", -1, new double[]{0.7, 0.7, 0.7, 1.});
+
+               m_renderer_wrapper.setRelief("relief.png");
            }
        });
 
@@ -208,7 +210,7 @@ public class FragmentGlobe extends Fragment {
                 m_glSurfaceView.queueEvent(new Runnable() {
                     @Override
                     public void run() {
-                        m_renderer_wrapper.rotateTo(lon + 5.f, 20.f, .5f);
+                        m_renderer_wrapper.rotateTo(lon - 5.f, 20.f, .5f);
                     }
                 });
             } }, 0, 500);

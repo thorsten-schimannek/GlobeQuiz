@@ -3,7 +3,6 @@ package com.shnoop.globequiz;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 import android.widget.OverScroller;
 
 import java.util.Stack;
@@ -35,6 +34,7 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
     private  AssetManager m_asset_manager;
     private boolean m_surface_created = false;
     private Stack<ShowAssetRequest> m_show_requests;
+    private String m_relief_texture;
 
     private OverScroller m_scroller;
 
@@ -60,6 +60,8 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
         m_surface_created = true;
 
         while(!m_show_requests.empty()) m_show_requests.pop().show();
+
+        if(m_relief_texture != null) setReliefTexture(m_relief_texture);
     }
 
     @Override
@@ -86,6 +88,12 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
 
         if(m_surface_created) showAsset(layer, filename, id, color);
         else m_show_requests.push(new ShowAssetRequest(layer, filename, id, color));
+    }
+
+    public void setRelief(String filename) {
+
+        m_relief_texture = filename;
+        if(m_surface_created) setReliefTexture(filename);
     }
 
     public void handleZoom(float factor) {
@@ -131,6 +139,7 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
      */
     private native void showAsset(int layer, String filename,
                                   int id, double[] color);
+    private native void setReliefTexture(String filename);
     public native int getRegionFromPoint(String filename, float x, float y);
     public native void loadAssets(AssetManager asset_manager);
     public native void setDimensions(int width, int height);

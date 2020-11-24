@@ -89,7 +89,18 @@ void AssetTriangleList::loadData() {
 void AssetTriangleList::bindVertexArray(int shader_id){
 
     auto assetManager = m_asset_manager.lock();
-    int position_attribute_location = assetManager->getTriangleShader(shader_id).getPositionAttribute();
+
+    AssetShader::ShaderType type = assetManager->getShader(shader_id)->getType();
+
+    int position_attribute_location;
+    switch(type) {
+        case AssetShader::TRIANGLES:
+            position_attribute_location = assetManager->getTriangleShader(shader_id).getPositionAttribute();
+            break;
+        case AssetShader::TRIANGLES_RELIEF:
+            position_attribute_location =  assetManager->getTriangleShaderRelief(shader_id).getPositionAttribute();
+            break;
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
     glVertexAttribPointer(position_attribute_location, 2, GL_FLOAT, GL_FALSE, 0, 0);

@@ -14,8 +14,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="5" />
+        android:layout_height="20dp" />
 
     <TextView
         android:id="@+id/scoreLabelTextView"
@@ -23,14 +22,17 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:text="@string/score_label" />
+        android:text="@string/score_label"
+        android:textColor="@color/colorBlack"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/scoreNumberTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:textColor="@color/colorBlack" />
 
     <TextView
         android:id="@+id/scorePercentTextView"
@@ -44,7 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold" />
 
     <Space
         android:layout_width="match_parent"
@@ -67,6 +71,18 @@
         android:layout_weight="0" />
 
     <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:id="@+id/textViewAchievementsNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack" />
+
+    <Space
+        android:id="@+id/spaceAchievement"
         android:layout_width="match_parent"
         android:layout_height="20dp" />
 

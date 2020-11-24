@@ -14,6 +14,10 @@
 ], "except": [161, 162, 163, 164, 166, 226, 227, 229, 238, 241]}
 ], "regions_list": [
   {"name": 0}, {"name": 1}, {"name": 2}, {"name": 3}, {"name": 4}, {"name": 5}, {"name": 6}
+], "achievements_list": [
+  {"name": 0, "description": 0, "conditions": [{"type": "result_exp", "threshold": 200}]},
+  {"name": 1, "description": 1, "conditions": [{"type": "result_correct", "threshold": 20}]},
+  {"name": 2, "description": 2, "conditions": [{"type": "question_correct_country", "type_id": 0, "data_id": 8, "threshold": 1}]}
 ], "countries_list": [
 {"id": "0", "name": 0, "region": 0, "population": 13805084, "color": 1, "longitude": 29.851441201921887, "latitude": -19.004204188216786, "capital": 0, "bounding_diameter": 10.30798331976827, "wiki": 0},
 {"id": "1", "name": 1, "region": 0, "population": 15972000, "color": 5, "longitude": 27.77475946369324, "latitude": -13.45824151864688, "capital": 1, "bounding_diameter": 15.2795197812858, "wiki": 1},

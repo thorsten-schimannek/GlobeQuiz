@@ -3,8 +3,8 @@ package com.shnoop.globequiz.fragments;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,7 @@ import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.R;
 import com.shnoop.globequiz.customadapters.LanguagesAdapter;
 import com.shnoop.globequiz.gamedata.Language;
+import com.shnoop.globequiz.player.PlayerManager;
 
 import java.util.ArrayList;
 
@@ -99,10 +100,12 @@ public class FragmentPlayerCreate extends Fragment {
 
                 Language playerLanguage = (Language) m_language_spinner.getSelectedItem();
 
-                int id = MainActivity.getPlayerManager().addPlayer(playerName, 0,
+                PlayerManager playerManager = MainActivity.getPlayerManager();
+                int id = playerManager.addPlayer(playerName, 0,
                         playerLanguage.getName());
+                playerManager.setPlayer(id);
+                playerManager.updatePreferences(getContext());
 
-                MainActivity.getPlayerManager().setPlayer(id);
                 MainActivity.getGameData().setCurrentLanguage(getContext(),
                         playerLanguage.getName());
 

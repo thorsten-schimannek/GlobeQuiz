@@ -5,11 +5,11 @@ public class QuestionSelectValue extends Question {
     private String m_answer;
 
     public QuestionSelectValue(String questionText, int typeIndex, int dataIndex, int regionIndex,
-                               String answer, double longitude, double latitude,
+                               int questionIndex, String answer, double longitude, double latitude,
                                double boundingDiameter, int experience){
 
-        super(questionText, typeIndex, dataIndex, regionIndex, QuestionType.Mode.SELECT_VALUE,
-                longitude, latitude, boundingDiameter, experience);
+        super(questionText, typeIndex, dataIndex, regionIndex, questionIndex,
+                QuestionType.Mode.SELECT_VALUE, longitude, latitude, boundingDiameter, experience);
 
         m_answer = answer;
     }

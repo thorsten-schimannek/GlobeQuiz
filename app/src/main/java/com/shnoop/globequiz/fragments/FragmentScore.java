@@ -3,24 +3,30 @@ package com.shnoop.globequiz.fragments;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.shnoop.globequiz.GameState;
 import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.R;
+import com.shnoop.globequiz.gamedata.Achievement;
+import com.shnoop.globequiz.gamedata.AchievementManager;
 import com.shnoop.globequiz.player.Player;
 import com.shnoop.globequiz.player.PlayerManager;
+
+import java.util.ArrayList;
 
 import static java.lang.Math.round;
 
@@ -29,19 +35,23 @@ import static java.lang.Math.round;
  */
 public class FragmentScore extends Fragment {
 
-    private FragmentScore m_this;
-
     private Button m_menu_button;
     private TextView m_score_label_textview;
     private TextView m_score_number_textview;
     private TextView m_score_percent_textview;
     private TextView m_evaluation_textview;
+    private TextView m_achievements_earned;
+
+    private Space m_achievements_space;
 
     private TextView m_experience_textview;
     private ProgressBar m_experience_progress_bar;
 
-    public FragmentScore() { m_this = this; }
+    private ArrayList<Achievement> m_achievements;
 
+    private boolean m_game_registered = false;
+
+    public FragmentScore() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,52 +63,100 @@ public class FragmentScore extends Fragment {
         m_score_number_textview = view.findViewById(R.id.scoreNumberTextView);
         m_score_percent_textview = view.findViewById(R.id.scorePercentTextView);
         m_evaluation_textview =  view.findViewById(R.id.evaluationTextView);
+        m_achievements_earned = view.findViewById(R.id.textViewAchievementsNumber);
+
+        m_achievements_space = view.findViewById(R.id.spaceAchievement);
 
         m_experience_textview = view.findViewById(R.id.textViewExperience);
         m_experience_progress_bar = view.findViewById(R.id.progressBarExperience);
 
-        m_menu_button =  view.findViewById(R.id.backToMenuButton);
-        m_menu_button.setOnClickListener(backToMenuListener);
+        PlayerManager player_manager = MainActivity.getPlayerManager();
+        Player player = player_manager.getCurrentPlayer();
 
-        animateExperienceBar();
-        updateStrings(getContext());
+        int experience_gained = MainActivity.getGameState().getExperience();
+        animateExperienceBar(player.getExperience(), experience_gained);
+
+        AchievementManager achievementManager = MainActivity.getGameData().getAchievementManager();
+
+        if(m_game_registered) m_achievements = new ArrayList<>();
+        else {
+            m_achievements = updateAchievements(achievementManager);
+            m_game_registered = true;
+        }
+
+        player.addExperience(experience_gained);
+        player.addStringData("correct", achievementManager.getStringFromCorrectAnswers());
+        player.addIntegerData("max_correct", achievementManager.getMaxCorrect());
+        player.addIntegerData("max_score", achievementManager.getMaxScore());
+
+        player_manager.updatePreferences(getContext());
+
+        m_menu_button =  view.findViewById(R.id.backToMenuButton);
+
+        if(m_achievements.size() == 0) {
+            m_menu_button.setOnClickListener(backToMenuListener);
+        }
+        else {
+            m_menu_button.setOnClickListener(showAchievementsListener);
+        }
+
+        updateStrings(getContext(), m_achievements.size() > 0);
 
         return view;
     }
 
-    private void animateExperienceBar() {
+    private ArrayList<Achievement> updateAchievements(AchievementManager achievementManager) {
 
-        int experience = MainActivity.getGameState().getExperience();
+        ArrayList<Achievement> new_achievements = achievementManager.registerGameResult(
+                MainActivity.getGameState().getCorrect()
+        );
 
-        PlayerManager playerManager = MainActivity.getPlayerManager();
+        return new_achievements;
+    }
+
+    private void animateExperienceBar(int experienceOld, int experienceGained) {
 
         ExperienceAnimator anim = new ExperienceAnimator(m_experience_textview,
-                m_experience_progress_bar, experience,
-                playerManager.getCurrentPlayer().getExperience());
-        anim.setDuration(2000);
-
-        playerManager.getCurrentPlayer().addExperience(experience);
-        playerManager.updatePreferences();
+                m_experience_progress_bar, experienceGained, experienceOld);
+        if(!m_game_registered) anim.setDuration(2000);
+        else anim.setDuration(0);
 
         m_experience_progress_bar.startAnimation(anim);
     }
 
-    private void updateStrings(Context context) {
+    private void updateStrings(Context context, boolean achievements) {
 
         String language = MainActivity.getGameData().getCurrentLanguage().getName();
         Resources resources = MainActivity.getResourcesByLocal(context, language);
 
         m_score_label_textview.setText(resources.getString(R.string.score_label));
-        m_menu_button.setText(resources.getString(R.string.back_to_menu));
+        if(achievements) {
+            m_menu_button.setText(resources.getString(R.string.show_achievements));
+        }
+        else {
+            m_menu_button.setText(resources.getString(R.string.back_to_menu));
+        }
 
         GameState gameState= MainActivity.getGameState();
         int total = gameState.getNumberOfQuestions();
-        int correct = gameState.getCorrect().size(); // TODO: Assign experience points according to levels
+        int correct = gameState.getCorrect().size();
 
         m_score_number_textview.setText(resources.getString(R.string.score_number_format,
                 correct, total, (100.0 * correct) / total));
         m_score_percent_textview.setText(resources
                 .getString(R.string.score_experience_gained_format, gameState.getExperience()));
+
+        if(m_achievements.size() > 0)
+            m_achievements_earned.setText(
+                    resources.getString(R.string.achievements_earned, m_achievements.size()));
+        else {
+            LinearLayout.LayoutParams layout_params = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    0
+            );
+            m_achievements_earned.setLayoutParams(layout_params);
+            m_achievements_space.setLayoutParams(layout_params);
+        }
 
         switch((5*correct)/total){
             case 0:
@@ -132,6 +190,19 @@ public class FragmentScore extends Fragment {
 
             getActivity().getSupportFragmentManager().popBackStack();
             MainActivity.showMenu((AppCompatActivity) getActivity());
+        }
+    };
+
+    private View.OnClickListener showAchievementsListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            FragmentAchievement next_achievement = FragmentAchievement.newInstance(m_achievements);
+
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragmentContainer, next_achievement);
+            transaction.addToBackStack("achievement");
+            transaction.commit();
         }
     };
 

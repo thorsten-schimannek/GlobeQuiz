@@ -15,9 +15,9 @@
 #include <vector>
 #include <stack>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtx/transform.hpp>
 
 #include <assets/AssetManager.h>
 #include <utilities/CubeMapCamera.h>
@@ -47,6 +47,8 @@ public:
 
     void showAsset(unsigned int layer, std::string file, Color color);
     void showAsset(unsigned int layer, std::string file, int id, Color color);
+    void setReliefTexture(std::string filename);
+    void hideReliefTexture();
 
     int getAssetRegionFromPoint(std::string file, float x, float y);
 
@@ -114,15 +116,21 @@ protected:
 
     float m_fps;
 
+    bool m_relief_texture_set {false};
+
     int m_triangle_shader_id;
+    int m_triangle_shader_relief_id;
     int m_line_shader_id;
     int m_point_shader_id;
+    int m_relief_texture_id;
 
     std::vector<std::vector<std::tuple<int, int, Color>>> m_triangle_assets;
     std::vector<std::vector<std::tuple<int, int, Color>>> m_line_assets;
     std::vector<std::vector<std::tuple<int, int, Color>>> m_point_assets;
 
     std::stack<std::tuple<int, std::string, int, Color>> m_asset_loading_stack;
+
+    std::string m_relief_texture_filename;
 
     std::unique_ptr<Rectangle> m_rectangle;
     std::unique_ptr<GlobeRectangleShaderProgram> m_shader_program_rectangle;

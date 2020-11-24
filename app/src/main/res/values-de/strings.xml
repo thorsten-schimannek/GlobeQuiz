@@ -73,5 +73,10 @@
     <string name="license_text_label">Lizenzen</string>
     <string name="author_text_label">von Thorsten Schimannek</string>
     <string name="email_text_label">globequiz.contact@gmail.com</string>
+    <string name="achievement">Errungenschaft</string>
+    <string name="next_achievement">Weiter</string>
+    <string name="show_achievements">Weiter</string>
+    <string name="achievements_earned">Du hast %1$d Errungenschaften freigeschaltet!</string>
+    <string name="achievements_list">Errungenschaften</string>
 
 </resources>

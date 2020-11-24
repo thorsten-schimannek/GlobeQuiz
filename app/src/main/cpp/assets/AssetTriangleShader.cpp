@@ -8,7 +8,7 @@ AssetTriangleShader::AssetTriangleShader(int id, std::string vertex_shader_code,
         std::string fragment_shader_code) :
         AssetShader {id, AssetShader::TRIANGLES, vertex_shader_code, fragment_shader_code} {
 
-    reload();
+    m_shader = std::make_unique<TriangleShaderProgram>(m_vertex_shader_code, m_fragment_shader_code);
 }
 
 void AssetTriangleShader::unload() {

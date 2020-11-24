@@ -1,6 +1,6 @@
 package com.shnoop.globequiz.gamedata;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.fragments.FragmentGlobe;
@@ -11,6 +11,7 @@ public abstract class Question {
     protected int m_type_index;
     protected int m_data_index;
     protected int m_region_index;
+    protected int m_question_index;
 
     protected double m_center_latitude;
     protected double m_center_longitude;
@@ -22,7 +23,7 @@ public abstract class Question {
     int m_experience;
 
     public Question(String questionText, int typeIndex, int dataIndex, int regionIndex,
-                    QuestionType.Mode mode, double longitude, double latitude,
+                    int questionIndex, QuestionType.Mode mode, double longitude, double latitude,
                     double boundingDiameter, int experience){
 
         m_question_text = questionText;
@@ -30,6 +31,7 @@ public abstract class Question {
         m_type_index = typeIndex;
         m_data_index = dataIndex;
         m_region_index = regionIndex;
+        m_question_index = questionIndex;
         m_mode = mode;
         m_center_longitude = longitude;
         m_center_latitude = latitude;
@@ -76,6 +78,7 @@ public abstract class Question {
     public int getTypeIndex() { return m_type_index; }
     public int getDataIndex() { return m_data_index; }
     public int getRegionIndex() { return m_region_index; }
+    public int getQuestionIndex() { return m_question_index; }
     public double getLongitude() { return m_center_longitude; }
     public double getLatitude() { return m_center_latitude; }
     public int getExperience() { return m_experience; }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:layout_centerVertical="true"
+    android:layout_gravity="center_vertical"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/button_background"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewAchievementsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/achievements_list"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="24sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <ListView
+        android:id="@+id/listViewAchievements"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="10dp" />
+</LinearLayout>

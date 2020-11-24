@@ -21,6 +21,10 @@ JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_loadAssets(
 JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_showAsset(
         JNIEnv *env, jobject object, jint layer, jstring file,
         jint id, jdoubleArray color);
+JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_setReliefTexture(
+        JNIEnv *env, jobject object, jstring file);
+JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_hideReliefTexture(
+        JNIEnv *env, jobject object);
 JNIEXPORT jint JNICALL Java_com_shnoop_globequiz_RendererWrapper_getRegionFromPoint(
         JNIEnv *env, jobject object, jstring file, jfloat x, jfloat y);
 JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_setDimensions(

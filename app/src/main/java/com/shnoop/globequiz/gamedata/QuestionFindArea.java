@@ -5,11 +5,11 @@ public class QuestionFindArea extends Question {
     private String m_asset_file;
 
     public QuestionFindArea(String questionText, int typeIndex, int dataIndex, int regionIndex,
-                            String assetFile, double longitude, double latitude,
+                            int questionIndex, String assetFile, double longitude, double latitude,
                             double boundingDiameter, int experience){
 
-        super(questionText, typeIndex, dataIndex, regionIndex, QuestionType.Mode.FIND_LOCATION_AREA,
-                longitude, latitude, boundingDiameter, experience);
+        super(questionText, typeIndex, dataIndex, regionIndex, questionIndex,
+                QuestionType.Mode.FIND_LOCATION_AREA, longitude, latitude, boundingDiameter, experience);
 
         m_asset_file = assetFile;
     }

@@ -8,7 +8,7 @@ AssetLineShader::AssetLineShader(int id, std::string vertex_shader_code,
         std::string fragment_shader_code) :
         AssetShader {id, AssetShader::LINES, vertex_shader_code, fragment_shader_code} {
 
-    reload();
+    m_shader = std::make_unique<LineShaderProgram>(m_vertex_shader_code, m_fragment_shader_code);
 }
 
 void AssetLineShader::unload() {

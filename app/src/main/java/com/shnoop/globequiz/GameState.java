@@ -1,7 +1,7 @@
 package com.shnoop.globequiz;
 
+
 import com.shnoop.globequiz.gamedata.Question;
-import com.shnoop.globequiz.gamedata.QuestionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ public class GameState {
 
     private State m_state;
     private List<Question> m_questions;
+    private List<Question> m_current_correct;
     private int m_current_question;
-    private List<Integer> m_current_correct;
     private List<Integer> m_levels;
     private int m_experience;
 
@@ -49,7 +49,7 @@ public class GameState {
         if (m_state == State.RUNNING_SINGLE_PLAYER) {
 
             if (correct) {
-                m_current_correct.add(getCurrentQuestion().getTypeIndex());
+                m_current_correct.add(getCurrentQuestion());
 
                 int level = m_levels.get(getCurrentQuestion().getTypeIndex());
                 m_experience += level * getCurrentQuestion().getExperience();
@@ -73,7 +73,7 @@ public class GameState {
     }
 
     public int getCurrentLevel() { return m_levels.get(getCurrentQuestion().getTypeIndex()); }
-    public List<Integer> getCorrect() { return m_current_correct; }
+    public List<Question> getCorrect() { return m_current_correct; }
     public int getExperience() { return m_experience; }
     public int getNumberOfQuestions() { return m_questions.size(); }
     public int getNumberOfCurrentQuestion() { return m_current_question + 1; }

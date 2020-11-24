@@ -100,83 +100,185 @@ int AssetManager::loadShaderAsset(AssetShader::ShaderType type, std::string vert
     std::string vertexShaderCode = getContentString(vertex_shader_file);
     std::string fragmentShaderCode = getContentString(fragment_shader_file);
 
-    int newId {-1};
+    int newId = m_shader_assets.size();
 
     switch(type) {
 
         case AssetShader::TRIANGLES: {
 
-            newId = m_triangle_shader_assets.size();
-            m_triangle_shader_assets.push_back(
+            m_shader_assets.push_back(
                     std::make_unique<AssetTriangleShader>(newId, vertexShaderCode, fragmentShaderCode));
+        } break;
+
+        case AssetShader::TRIANGLES_RELIEF: {
+
+            m_shader_assets.push_back(
+                    std::make_unique<AssetTriangleShaderRelief>(newId, vertexShaderCode, fragmentShaderCode));
         } break;
 
         case AssetShader::LINES: {
 
-            newId = m_line_shader_assets.size();
-            m_line_shader_assets.push_back(
+            m_shader_assets.push_back(
                     std::make_unique<AssetLineShader>(newId, vertexShaderCode, fragmentShaderCode));
         } break;
 
         case AssetShader::POINTS: {
 
-            newId = m_point_shader_assets.size();
-            m_point_shader_assets.push_back(
+            m_shader_assets.push_back(
                     std::make_unique<AssetPointShader>(newId, vertexShaderCode, fragmentShaderCode));
         } break;
 
-        case AssetShader::UNKNOWN: break;
+        case AssetShader::UNKNOWN:
+            return -1;
     }
 
-    if(newId != -1)
-        m_shader_asset_ids[std::make_tuple(vertex_shader_file, fragment_shader_file)] = newId;
+    m_shader_asset_ids[std::make_tuple(vertex_shader_file, fragment_shader_file)] = newId;
+    return newId;
+}
 
+int AssetManager::loadTextureAsset(AssetTexture::TextureType type, std::string filename) {
+
+    if(m_texture_asset_ids.count(std::make_tuple(filename, type)) > 0)
+        return m_texture_asset_ids.at(std::make_tuple(filename, type));
+
+    int newId = m_texture_assets.size();
+
+    switch(type) {
+
+        case AssetTexture::TEXTURE_2D:
+
+            m_texture_assets.push_back(
+                    std::make_unique<AssetTexture2d>(newId, filename, shared_from_this()));
+            break;
+
+        default:
+            return -1;
+    }
+
+    m_texture_asset_ids[std::make_tuple(filename, type)] = newId;
     return newId;
 }
 
 void AssetManager::unloadAssets() {
 
     for(auto& asset : m_geometry_assets) asset->unload();
-    for(auto& asset : m_triangle_shader_assets) asset->unload();
-    for(auto& asset : m_line_shader_assets) asset->unload();
-    for(auto& asset : m_point_shader_assets) asset->unload();
+    for(auto& asset : m_shader_assets) asset->unload();
+    for(auto& asset : m_texture_assets) asset->unload();
 }
 
 void AssetManager::reloadAssets() {
 
     for(auto& asset : m_geometry_assets) asset->reload();
-    for(auto& asset : m_triangle_shader_assets) asset->reload();
-    for(auto& asset : m_line_shader_assets) asset->reload();
-    for(auto& asset : m_point_shader_assets) asset->reload();
+    for(auto& asset : m_shader_assets) asset->reload();
+    for(auto& asset : m_texture_assets) asset->reload();
+}
+
+void AssetManager::checkShaderId(std::string function_name, int shader_id) {
+
+    if(shader_id >= m_shader_assets.size())
+        throw std::invalid_argument(function_name + ": Invalid shader id.");
+}
+
+void AssetManager::checkShaderId(std::string function_name, int shader_id,
+        AssetShader::ShaderType type) {
+
+    checkShaderId(function_name, shader_id);
+
+    if(m_shader_assets[shader_id]->getType() != type)
+        throw std::invalid_argument(function_name + ": Invalid shader type.");
+}
+
+void AssetManager::checkGeometryId(std::string function_name, int geometry_id) {
+
+    if(geometry_id >= m_geometry_assets.size())
+        throw std::invalid_argument(function_name + ": Invalid geometry id.");
+}
+
+void AssetManager::checkGeometryId(std::string function_name, int geometry_id,
+        AssetGeometry::GeometryType type) {
+
+    checkGeometryId(function_name, geometry_id);
+
+    if(m_geometry_assets[geometry_id]->getType() != type)
+        throw std::invalid_argument(function_name + ": Invalid geometry type.");
+}
+
+void AssetManager::checkTextureId(std::string function_name, int texture_id) {
+
+    if(texture_id >= m_texture_assets.size())
+        throw std::invalid_argument(function_name + ": Invalid texture id.");
+}
+
+void AssetManager::checkTextureId(std::string function_name, int texture_id,
+                                   AssetTexture::TextureType type) {
+
+    checkTextureId(function_name, texture_id);
+
+    if(m_texture_assets[texture_id]->getType() != type)
+        throw std::invalid_argument(function_name + ": Invalid texture type.");
 }
 
 AssetGeometry::GeometryType AssetManager::getGeometryAssetType(int asset_id) {
 
+    checkGeometryId(__FUNCTION__, asset_id);
     return m_geometry_assets[asset_id]->getType();
 }
 
 int AssetManager::getGeometryAssetEntryNumber(int asset_id) {
 
+    checkGeometryId(__FUNCTION__, asset_id);
     return m_geometry_assets[asset_id]->numEntries();
+}
+
+AssetShader* AssetManager::getShader(int shader_id) {
+
+    checkShaderId(__FUNCTION__, shader_id);
+    return m_shader_assets[shader_id].get();
 }
 
 const AssetTriangleShader& AssetManager::getTriangleShader(int shader_id) {
 
-    return *m_triangle_shader_assets[shader_id];
+    checkShaderId(__FUNCTION__, shader_id, AssetShader::TRIANGLES);
+    AssetShader* shader = getShader(shader_id);
+
+    return *(AssetTriangleShader*)shader;
+}
+
+const AssetTriangleShaderRelief& AssetManager::getTriangleShaderRelief(int shader_id) {
+
+    checkShaderId(__FUNCTION__, shader_id, AssetShader::TRIANGLES_RELIEF);
+    AssetShader* shader = getShader(shader_id);
+
+    return *(AssetTriangleShaderRelief*)shader;
 }
 
 const AssetLineShader& AssetManager::getLineShader(int shader_id) {
 
-    return *m_line_shader_assets[shader_id];
+    checkShaderId(__FUNCTION__, shader_id, AssetShader::LINES);
+    AssetShader* shader = getShader(shader_id);
+
+    return *(AssetLineShader*)shader;
 }
 
 const AssetPointShader& AssetManager::getPointShader(int shader_id) {
 
-    return *m_point_shader_assets[shader_id];
+    checkShaderId(__FUNCTION__, shader_id, AssetShader::POINTS);
+    AssetShader* shader = getShader(shader_id);
+
+    return *(AssetPointShader*)shader;
+}
+
+AssetTexture* AssetManager::getTexture(int texture_id) {
+
+    checkTextureId(__FUNCTION__, texture_id);
+    return m_texture_assets[texture_id].get();
 }
 
 void AssetManager::draw(int shader_id, int asset_id, int region_id,
                         int longitude_grid_n, int latitude_grid_n) {
+
+    checkShaderId(__FUNCTION__, shader_id);
+    checkGeometryId(__FUNCTION__, asset_id);
 
     m_geometry_assets[asset_id]->draw(shader_id, region_id,
                                       longitude_grid_n, latitude_grid_n);
@@ -184,11 +286,17 @@ void AssetManager::draw(int shader_id, int asset_id, int region_id,
 
 void AssetManager::draw(int shader_id, int asset_id, int region_id) {
 
+    checkShaderId(__FUNCTION__, shader_id);
+    checkGeometryId(__FUNCTION__, asset_id);
+
     if(region_id == -1) m_geometry_assets[asset_id]->draw(shader_id);
     else m_geometry_assets[asset_id]->draw(shader_id, region_id);
 }
 
 void AssetManager::draw(int shader_id, int asset_id) {
+
+    checkShaderId(__FUNCTION__, shader_id);
+    checkGeometryId(__FUNCTION__, asset_id);
 
     m_geometry_assets[asset_id]->draw(shader_id);
 }

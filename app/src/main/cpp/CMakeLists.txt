@@ -4,6 +4,7 @@
 # Sets the minimum version of CMake required to build the native library.
 
 cmake_minimum_required(VERSION 3.4.1)
+add_definitions(-DPNG_ARM_NEON_OPT=0)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -23,6 +24,7 @@ add_library( # Sets the name of the library.
              objects/Rectangle.cpp
              shaders/GlobeRectangleShaderProgram.cpp
              shaders/TriangleShaderProgram.cpp
+             shaders/TriangleShaderProgramRelief.cpp
              shaders/LineShaderProgram.cpp
              shaders/PointShaderProgram.cpp
              assets/AssetManager.cpp
@@ -30,12 +32,30 @@ add_library( # Sets the name of the library.
              assets/AssetLineList.cpp
              assets/AssetPointList.cpp
              assets/AssetTriangleShader.cpp
+             assets/AssetTriangleShaderRelief.cpp
              assets/AssetLineShader.cpp
              assets/AssetPointShader.cpp
+             assets/AssetTexture2d.cpp
              utilities/CubeMap.cpp
              utilities/CubeMapCamera.cpp
              utilities/RenderTarget.cpp
-             shaders/ShaderProgram.cpp )
+             utilities/ImagePng.cpp
+             shaders/ShaderProgram.cpp
+             libraries/libpng/png.c
+             libraries/libpng/pngerror.c
+             libraries/libpng/pngget.c
+             libraries/libpng/pngmem.c
+             libraries/libpng/pngpread.c
+             libraries/libpng/pngread.c
+             libraries/libpng/pngrio.c
+             libraries/libpng/pngrtran.c
+             libraries/libpng/pngrutil.c
+             libraries/libpng/pngset.c
+             libraries/libpng/pngtrans.c
+             libraries/libpng/pngwio.c
+             libraries/libpng/pngwrite.c
+             libraries/libpng/pngwtran.c
+             libraries/libpng/pngwutil.c)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -63,6 +83,8 @@ target_link_libraries( # Specifies the target library.
                        android
                        EGL
                        GLESv2
+                       z
         )
 
-include_directories(./)
+include_directories(./
+                    libraries)

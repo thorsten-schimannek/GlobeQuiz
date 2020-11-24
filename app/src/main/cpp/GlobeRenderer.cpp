@@ -59,6 +59,9 @@ void GlobeRenderer::initialize() {
     for(int i = 0; i < m_layers; i++) m_cubemaps.push_back(std::make_unique<CubeMap>(m_cubemap_size));
     std::fill(m_cubemap_invalid.begin(), m_cubemap_invalid.end(), true);
 
+    if(m_relief_texture_set) // SIC
+       setReliefTexture(m_relief_texture_filename);
+
     loadAssets();
 }
 
@@ -69,13 +72,20 @@ void GlobeRenderer::loadAssets() {
         m_asset_manager->reloadAssets();
 
         m_triangle_shader_id = m_asset_manager->loadShaderAsset(AssetShader::TRIANGLES,
-                "shader/triangle_vertex_shader.glsl", "shader/triangle_fragment_shader.glsl");
+                "shader/triangle_vertex_shader.glsl",
+                "shader/triangle_fragment_shader.glsl");
+
+        m_triangle_shader_relief_id = m_asset_manager->loadShaderAsset(AssetShader::TRIANGLES_RELIEF,
+            "shader/triangle_vertex_shader.glsl",
+            "shader/triangle_relief_fragment_shader.glsl");
 
         m_line_shader_id = m_asset_manager->loadShaderAsset(AssetShader::LINES,
-                "shader/line_vertex_shader.glsl", "shader/line_fragment_shader.glsl");
+                "shader/line_vertex_shader.glsl",
+                "shader/line_fragment_shader.glsl");
 
         m_point_shader_id = m_asset_manager->loadShaderAsset(AssetShader::POINTS,
-                "shader/point_vertex_shader.glsl", "shader/point_fragment_shader.glsl");
+                "shader/point_vertex_shader.glsl",
+                "shader/point_fragment_shader.glsl");
 
         processAssetStack();
     }
@@ -91,6 +101,21 @@ void GlobeRenderer::processAssetStack() {
 
         m_asset_loading_stack.pop();
     }
+}
+
+void GlobeRenderer::setReliefTexture(std::string filename) {
+
+    m_relief_texture_set = true;
+    m_relief_texture_filename = filename;
+
+    if(m_asset_manager != nullptr)
+        m_relief_texture_id = m_asset_manager->loadTextureAsset(
+                AssetTexture::TEXTURE_2D, filename);
+}
+
+void GlobeRenderer::hideReliefTexture() {
+
+    m_relief_texture_set = false;
 }
 
 void GlobeRenderer::showAsset(unsigned int layer, std::string file, Color color) {
@@ -220,6 +245,12 @@ void GlobeRenderer::drawFrame() {
 
     if(m_asset_manager == nullptr) return;
 
+    if(m_relief_texture_set) {
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(m_asset_manager->getTriangleShaderRelief(m_triangle_shader_relief_id).getTextureUniform(), 0);
+        m_asset_manager->getTexture(m_relief_texture_id)->bindTexture(GL_TEXTURE_2D);
+    }
+
     updateCubeMaps();
     drawGlobe();
 }
@@ -298,16 +329,16 @@ void GlobeRenderer::drawGlobeDirectly(float x_rotation, float y_rotation, float 
 
     for(int i = 0; i < m_layers; i++) {
 
-        const AssetTriangleShader &triangleShader = m_asset_manager->getTriangleShader(
-                m_triangle_shader_id);
+        int triangleShaderId = m_relief_texture_set ? m_triangle_shader_relief_id : m_triangle_shader_id;
+        AssetShader* triangleShader = m_asset_manager->getShader(triangleShaderId);
 
-        triangleShader.useProgram();
-        triangleShader.setMatrices(m_orthographic_view_projection_matrix, rotation_matrix);
-        triangleShader.setZoom(zoom);
-        triangleShader.setDirectRendering(true);
+        triangleShader->useProgram();
+        triangleShader->setMatrices(m_orthographic_view_projection_matrix, rotation_matrix);
+        triangleShader->setZoom(zoom);
+        triangleShader->setDirectRendering(true);
 
         glCullFace(GL_FRONT);
-        drawVisiblePatches(rotation_matrix, zoom, triangleShader, m_triangle_assets[i]);
+        drawVisiblePatches(rotation_matrix, zoom, *triangleShader, m_triangle_assets[i]);
 
         const AssetLineShader &lineShader = m_asset_manager->getLineShader(m_line_shader_id);
 
@@ -360,16 +391,16 @@ void GlobeRenderer::updateCubeMap(unsigned int layer, Color background) {
         glm::mat4 projectionView = cubemap.getProjectionViewMatrix();
         auto identityMatrix = glm::mat4(1.0f);
 
-        const AssetTriangleShader& triangleShader
-            = m_asset_manager->getTriangleShader(m_triangle_shader_id);
+        int triangleShaderId = m_relief_texture_set ? m_triangle_shader_relief_id : m_triangle_shader_id;
+        AssetShader* triangleShader = m_asset_manager->getShader(triangleShaderId);
 
-        triangleShader.useProgram();
-        triangleShader.setMatrices(projectionView, identityMatrix);
-        triangleShader.setZoom(1.f);
-        triangleShader.setDirectRendering(false);
+        triangleShader->useProgram();
+        triangleShader->setMatrices(projectionView, identityMatrix);
+        triangleShader->setZoom(1.f);
+        triangleShader->setDirectRendering(false);
 
         auto& assetTriangleList = m_triangle_assets[layer];
-        drawAssets(triangleShader, assetTriangleList);
+        drawAssets(*triangleShader, assetTriangleList);
 
         const AssetLineShader& lineShader
                 = m_asset_manager->getLineShader(m_line_shader_id);
@@ -380,7 +411,6 @@ void GlobeRenderer::updateCubeMap(unsigned int layer, Color background) {
         lineShader.setDirectRendering(false);
 
         auto& assetLineList = m_line_assets[layer];
-
 
         glBlendFunc(GL_ONE, GL_ZERO);
         lineShader.setThickness(.002f);

@@ -17,11 +17,11 @@ public class QuestionManager {
         m_question_types = new ArrayList<>();
     }
 
-    public void registerQuestionType(JSONObject gameData, JSONObject strings,
-                                     JSONObject questionType) {
+    public void registerQuestionType(JSONObject questionType,
+                                     JSONObject gameData, JSONObject strings) {
 
-        m_question_types.add(new QuestionType(m_question_types.size(), gameData,
-                strings, questionType));
+        m_question_types.add(new QuestionType(m_question_types.size(), questionType,
+                gameData, strings));
     }
 
     public int getTypeNumber() { return m_question_types.size(); }
@@ -44,12 +44,10 @@ public class QuestionManager {
         for(int typeIndex : types) {
 
             QuestionType type = m_question_types.get(typeIndex);
+            List<List<Question>> questions = type.getQuestions();
 
-            for(int i = 0; i < type.getQuestionNumber(); i++){
-
-               Question question = type.getQuestion(i);
-               if(regionsSet.contains(question.getRegionIndex())) fullQuestionList.add(question);
-            }
+            for(int i : regions)
+                fullQuestionList.addAll(questions.get(i));
         }
 
         if(fullQuestionList.size() < number) return fullQuestionList;
@@ -77,6 +75,11 @@ public class QuestionManager {
     public QuestionType getType(int type) {
 
         return m_question_types.get(type);
+    }
+
+    public List<QuestionType> getTypes() {
+
+        return m_question_types;
     }
 
     public List<String> getWrongAnswers(Question question, int number) {

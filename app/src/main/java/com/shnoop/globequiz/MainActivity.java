@@ -10,11 +10,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -27,7 +27,9 @@ import android.widget.TextView;
 
 import com.shnoop.globequiz.fragments.FragmentGlobe;
 import com.shnoop.globequiz.fragments.FragmentMainMenu;
+import com.shnoop.globequiz.gamedata.AchievementManager;
 import com.shnoop.globequiz.gamedata.GameData;
+import com.shnoop.globequiz.player.Player;
 import com.shnoop.globequiz.player.PlayerManager;
 
 import java.io.InputStream;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     public interface ReceiverFragment{ void unregisterBroadcastReceiver(); }
 
+    // Eventually refactor these singletons away?
+    // Perhaps at least Service Locator pattern?
     private static GameData m_game_data;
     private static PlayerManager m_player_manager;
     private static GameState m_game_state;
@@ -67,15 +71,30 @@ public class MainActivity extends AppCompatActivity {
         m_game_data = new GameData(this,
                 "languages_data.json", "game_data.json");
 
-        String language;
         if(m_player_manager.getState() == PlayerManager.PlayerManagerState.PLAYER_SELECTED) {
 
-            language = m_player_manager.getCurrentPlayer().getLanguage();
+            Player player = m_player_manager.getCurrentPlayer();
+            String language = player.getLanguage();
+            m_game_data.setCurrentLanguage(this, language);
+
+            AchievementManager achievementManager = m_game_data.getAchievementManager();
+
+            String correctAnswers = player.getStringData("correct");
+            if(correctAnswers != null) {
+                achievementManager.setCorrectAnswersFromString(correctAnswers, false);
+            }
+            Integer maxScore = player.getIntegerData("max_score");
+            if(maxScore != null) achievementManager.setMaxScore(maxScore, false);
+
+            Integer maxCorrect = player.getIntegerData("max_correct");
+            if(maxCorrect != null) achievementManager.setMaxCorrect(maxCorrect, false);
+
+            achievementManager.updateAchievements();
         }
         else {
-            language = getResources().getConfiguration().locale.getCountry().toLowerCase();
+            String language = getResources().getConfiguration().locale.getCountry().toLowerCase();
+            m_game_data.setCurrentLanguage(this, language);
         }
-        m_game_data.setCurrentLanguage(this, language);
 
         m_info_layout = findViewById(R.id.linearLayoutInfo);
         m_info_textview = findViewById(R.id.textViewInfo);

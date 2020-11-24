@@ -7,14 +7,10 @@
 
 #include <string>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 #include "ShaderProgram.h"
-
-#define ATTRIBUTE_POSITION "a_Position"
-
-#define UNIFORM_CUBEMAP "u_CubeMap"
 
 class GlobeRectangleShaderProgram : public ShaderProgram{
 
@@ -30,6 +26,9 @@ class GlobeRectangleShaderProgram : public ShaderProgram{
         }
 
     protected:
+
+        static constexpr auto ATTRIBUTE_POSITION = "a_Position";
+        static constexpr auto UNIFORM_CUBEMAP = "u_CubeMap";
 
         GLint m_attribute_position;
         GLuint m_uniform_cubemap;

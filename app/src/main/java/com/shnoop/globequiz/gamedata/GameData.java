@@ -24,6 +24,7 @@ public class GameData {
     private String m_game_data_file;
 
     private QuestionManager m_question_manager;
+    private AchievementManager m_achievement_manager;
     private List<Country> m_countries;
     private List<Region> m_regions;
 
@@ -48,6 +49,11 @@ public class GameData {
     public QuestionManager getQuestionManager() {
 
         return m_question_manager;
+    }
+
+    public AchievementManager getAchievementManager() {
+
+        return m_achievement_manager;
     }
 
     private void loadLanguages(Context context, String languageDataFile) {
@@ -80,45 +86,75 @@ public class GameData {
 
         String stringsFile = m_current_language.getStringsFile();
 
-        m_question_manager = new QuestionManager();
-        m_countries = new ArrayList<>();
-        m_regions = new ArrayList<>();
-
-        String game_data_json_string = loadFile(context, m_game_data_file);
-        String string_data_json_string = loadFile(context, stringsFile);
+        String game_data_raw = loadFile(context, m_game_data_file);
+        String strings_raw = loadFile(context, stringsFile);
 
         try {
-            JSONObject game_data_json = new JSONObject(game_data_json_string);
-            JSONObject strings_json = new JSONObject(string_data_json_string);
+            JSONObject game_data_json = new JSONObject(game_data_raw);
+            JSONObject strings_json = new JSONObject(strings_raw);
 
-            JSONArray regions_json = game_data_json.getJSONArray("regions_list");
-            JSONObject regions_strings_json = strings_json.getJSONObject("regions_list");
-            for (int index = 0; index < regions_json.length(); index++) {
-
-                JSONObject region = regions_json.getJSONObject(index);
-
-                m_regions.add(new Region(region, regions_strings_json));
-            }
-
-            JSONArray questions_json = game_data_json.getJSONArray("questions_list");
-            for (int index = 0; index < questions_json.length(); index++) {
-
-                JSONObject question_type = questions_json.getJSONObject(index);
-
-                m_question_manager.registerQuestionType(game_data_json, strings_json, question_type);
-            }
-
-            JSONArray countries_json = game_data_json.getJSONArray("countries_list");
-            JSONObject countries_strings_json = strings_json.getJSONObject("countries_list");
-            for (int index = 0; index < countries_json.length(); index++) {
-
-                JSONObject country = countries_json.getJSONObject(index);
-
-                m_countries.add(new Country(country, countries_strings_json));
-            }
+            loadRegionsList(game_data_json, strings_json);
+            loadQuestionsList(game_data_json, strings_json);
+            loadAchievementList(game_data_json, strings_json);
+            loadCountriesList(game_data_json, strings_json);
         }
         catch(JSONException exception){
             Log.e("@strings/log_tag", "Error parsing game_data");
+        }
+    }
+
+    private void loadRegionsList(JSONObject game_data, JSONObject strings) throws JSONException{
+
+        m_regions = new ArrayList<>();
+
+        JSONArray regions_json = game_data.getJSONArray("regions_list");
+        JSONObject regions_strings_json = strings.getJSONObject("regions_list");
+        for (int index = 0; index < regions_json.length(); index++) {
+
+            JSONObject region = regions_json.getJSONObject(index);
+
+            m_regions.add(new Region(region, regions_strings_json));
+        }
+    }
+
+    private void loadQuestionsList(JSONObject game_data, JSONObject strings) throws JSONException {
+
+        m_question_manager = new QuestionManager();
+
+        JSONArray questions_json = game_data.getJSONArray("questions_list");
+        for (int index = 0; index < questions_json.length(); index++) {
+
+            JSONObject question_type = questions_json.getJSONObject(index);
+
+            m_question_manager.registerQuestionType(question_type, game_data, strings);
+        }
+    }
+
+    private void loadCountriesList(JSONObject game_data, JSONObject strings) throws JSONException {
+
+        m_countries = new ArrayList<>();
+
+        JSONArray countries_json = game_data.getJSONArray("countries_list");
+        JSONObject countries_strings_json = strings.getJSONObject("countries_list");
+        for (int index = 0; index < countries_json.length(); index++) {
+
+            JSONObject country = countries_json.getJSONObject(index);
+
+            m_countries.add(new Country(country, countries_strings_json));
+        }
+    }
+
+    private void loadAchievementList(JSONObject game_data, JSONObject strings) throws JSONException {
+
+        m_achievement_manager = new AchievementManager(m_question_manager);
+
+        JSONArray achievements = game_data.getJSONArray("achievements_list");
+        for (int index = 0; index < achievements.length(); index++) {
+
+            JSONObject achievement = achievements.getJSONObject(index);
+
+            m_achievement_manager.registerAchievement(
+                    new Achievement(m_question_manager, achievement, strings));
         }
     }
 

@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "shaders/ShaderProgram.h"
 
@@ -19,7 +19,8 @@ public:
         TRIANGLES = 0,
         LINES = 1,
         POINTS = 2,
-        UNKNOWN = 3
+        UNKNOWN = 3,
+        TRIANGLES_RELIEF = 4
     };
 
     virtual void reload() = 0;
@@ -34,6 +35,8 @@ public:
     virtual ~AssetShader() {};
 
     int getId() const { return m_id; }
+
+    ShaderType getType() { return m_type; }
 
     void setMatrices(const glm::mat4& view_projection, const glm::mat4& rotation) const {
 

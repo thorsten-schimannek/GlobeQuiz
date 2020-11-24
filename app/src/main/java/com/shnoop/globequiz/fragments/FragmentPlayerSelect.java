@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +20,9 @@ import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.R;
 import com.shnoop.globequiz.customadapters.PlayersAdapter;
 import com.shnoop.globequiz.customadapters.PlayersListItem;
+import com.shnoop.globequiz.gamedata.AchievementManager;
+import com.shnoop.globequiz.gamedata.GameData;
+import com.shnoop.globequiz.player.Player;
 import com.shnoop.globequiz.player.PlayerManager;
 
 import java.util.ArrayList;
@@ -84,9 +87,7 @@ public class FragmentPlayerSelect extends Fragment implements PlayersAdapter.Pla
             item.measure(View.MeasureSpec.makeMeasureSpec((int) px, View.MeasureSpec.AT_MOST),
                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
-            int newHeight = 6 * item.getMeasuredHeight();
-
-            layoutParams.height = newHeight;
+            layoutParams.height = 6 * item.getMeasuredHeight();
         }
 
         m_players_list_view.setLayoutParams(layoutParams);
@@ -112,7 +113,11 @@ public class FragmentPlayerSelect extends Fragment implements PlayersAdapter.Pla
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         m_players_adapter.remove(m_players_list.get(deleteId));
-                        MainActivity.getPlayerManager().removePlayer(deleteId);
+
+                        PlayerManager playerManager = MainActivity.getPlayerManager();
+                        playerManager.removePlayer(deleteId);
+                        playerManager.updatePreferences(getContext());
+
                         adjustListViewHeight();
                     }
                 })
@@ -123,11 +128,28 @@ public class FragmentPlayerSelect extends Fragment implements PlayersAdapter.Pla
 
     public void selectPlayer(int id) {
 
-        PlayerManager pm = MainActivity.getPlayerManager();
-        pm.setPlayer((int)id);
+        PlayerManager playerManager = MainActivity.getPlayerManager();
+        playerManager.setPlayer(id);
+        playerManager.updatePreferences(getContext());
 
-        MainActivity.getGameData().setCurrentLanguage(getContext(),
-                pm.getCurrentPlayer().getLanguage());
+        Player player = playerManager.getCurrentPlayer();
+
+        GameData gameData = MainActivity.getGameData();
+        gameData.setCurrentLanguage(getContext(), player.getLanguage());
+
+        AchievementManager achievementManager = gameData.getAchievementManager();
+
+        String correctAnswers = player.getStringData("correct");
+        if(correctAnswers != null) {
+            achievementManager.setCorrectAnswersFromString(correctAnswers, false);
+        }
+        Integer maxScore = player.getIntegerData("max_score");
+        if(maxScore != null) achievementManager.setMaxScore(maxScore, false);
+
+        Integer maxCorrect = player.getIntegerData("max_correct");
+        if(maxCorrect != null) achievementManager.setMaxCorrect(maxCorrect, false);
+
+        achievementManager.updateAchievements();
 
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(1).getId(),

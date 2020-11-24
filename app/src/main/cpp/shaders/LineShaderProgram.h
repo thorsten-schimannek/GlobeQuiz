@@ -7,17 +7,10 @@
 
 #include <string>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 #include "ShaderProgram.h"
-
-#define ATTRIBUTE_POSITION  "a_Position"
-#define ATTRIBUTE_PREVIOUS  "a_Previous"
-#define ATTRIBUTE_NEXT      "a_Next"
-#define ATTRIBUTE_DIRECTION "a_Direction"
-
-#define UNIFORM_THICKNESS   "u_Thickness"
 
 class LineShaderProgram : public ShaderProgram{
 
@@ -34,6 +27,12 @@ public:
     GLint getDirectionAttributeLocation();
 
 protected:
+
+    static constexpr auto ATTRIBUTE_POSITION = "a_Position";
+    static constexpr auto ATTRIBUTE_PREVIOUS = "a_Previous";
+    static constexpr auto ATTRIBUTE_NEXT = "a_Next";
+    static constexpr auto ATTRIBUTE_DIRECTION = "a_Direction";
+    static constexpr auto UNIFORM_THICKNESS = "u_Thickness";
 
     // Positions - Vertex Shader
     GLint m_attribute_position;
