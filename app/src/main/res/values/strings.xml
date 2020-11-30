@@ -103,4 +103,5 @@
     <string name="show_achievements">Show</string>
     <string name="achievements_earned">You unlocked %1$d achievements!</string>
     <string name="achievements_list">Achievements</string>
+    <string name="show_relief">Show relief:</string>
 </resources>

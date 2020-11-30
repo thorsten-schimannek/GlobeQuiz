@@ -96,6 +96,12 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
         if(m_surface_created) setReliefTexture(filename);
     }
 
+    public void hideRelief() {
+
+        m_relief_texture = null;
+        if(m_surface_created) hideReliefTexture();
+    }
+
     public void handleZoom(float factor) {
 
         setZoom(factor);
@@ -140,6 +146,7 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
     private native void showAsset(int layer, String filename,
                                   int id, double[] color);
     private native void setReliefTexture(String filename);
+    private native void hideReliefTexture();
     public native int getRegionFromPoint(String filename, float x, float y);
     public native void loadAssets(AssetManager asset_manager);
     public native void setDimensions(int width, int height);

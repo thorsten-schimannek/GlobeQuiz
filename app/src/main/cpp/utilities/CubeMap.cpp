@@ -59,8 +59,7 @@ void CubeMap::unbind() {
 
 glm::mat4 CubeMap::getProjectionViewMatrix() {
 
-    glm::mat4 projectionView;
-    m_camera.getProjectionViewMatrix(&projectionView);
+    glm::mat4 projectionView = m_camera.getProjectionViewMatrix();
 
     return projectionView;
 }

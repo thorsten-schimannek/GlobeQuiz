@@ -17,12 +17,14 @@
 
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtx/matrix_operation.hpp>
 #include <glm/glm/gtx/transform.hpp>
 
 #include <assets/AssetManager.h>
 #include <utilities/CubeMapCamera.h>
 #include <objects/Rectangle.h>
 #include <shaders/GlobeRectangleShaderProgram.h>
+#include <shaders/GlobeRectangleShaderProgramRelief.h>
 #include <utilities/RenderTarget.h>
 #include <utilities/CubeMap.h>
 #include <utilities/Color.h>
@@ -85,7 +87,7 @@ protected:
                     int longi, int lati, Color force_color);
 
     void updateCubeMaps();
-    void updateCubeMap(unsigned int layer, Color background);
+    void updateCubeMap(unsigned int layer, Color background, bool relief = false);
 
     std::tuple<int, int> getGridRegionFromWorldSpacePoint(float x, float y, float z);
     std::tuple<float, float, float> getWorldSpaceFromScreenCoordinates(float x, float y);
@@ -134,6 +136,7 @@ protected:
 
     std::unique_ptr<Rectangle> m_rectangle;
     std::unique_ptr<GlobeRectangleShaderProgram> m_shader_program_rectangle;
+    std::unique_ptr<GlobeRectangleShaderProgramRelief> m_shader_program_rectangle_relief;
 };
 
 

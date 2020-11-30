@@ -27,6 +27,7 @@ public class Player {
 
     private Map<String, Integer> m_extra_data_integers;
     private Map<String, String> m_extra_data_strings;
+    private Map<String, Boolean> m_extra_data_booleans;
 
     public Player(String name, int exp, String language) {
 
@@ -36,6 +37,7 @@ public class Player {
 
         m_extra_data_integers = new HashMap<>();
         m_extra_data_strings = new HashMap<>();
+        m_extra_data_booleans = new HashMap<>();
     }
 
     public String getName() { return m_name; }
@@ -73,10 +75,13 @@ public class Player {
 
     public void addStringData(String key, String value) { m_extra_data_strings.put(key, value); }
     public void addIntegerData(String key, Integer value) { m_extra_data_integers.put(key, value); }
+    public void addBooleanData(String key, Boolean value) { m_extra_data_booleans.put(key, value); }
 
     public Map<String, String> getStringData() { return m_extra_data_strings; }
     public Map<String, Integer> getIntegerData() { return m_extra_data_integers; }
+    public Map<String, Boolean> getBooleanData() { return m_extra_data_booleans; }
 
     public String getStringData(String key) { return m_extra_data_strings.get(key); }
     public Integer getIntegerData(String key) { return m_extra_data_integers.get(key); }
+    public Boolean getBooleanData(String key) { return m_extra_data_booleans.get(key); }
 }

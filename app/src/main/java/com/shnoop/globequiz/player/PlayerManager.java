@@ -79,6 +79,11 @@ public class PlayerManager {
                 for(String key : string_keys)
                     player.addStringData(key, playerSettings.getString(key, null));
 
+            Set<String> boolean_keys = playerSettings.getStringSet("boolean_keys", null);
+            if(boolean_keys != null)
+                for(String key : boolean_keys)
+                    player.addBooleanData(key, playerSettings.getBoolean(key,true));
+
             return player;
 
         } catch (java.security.NoSuchAlgorithmException exception) {
@@ -209,6 +214,10 @@ public class PlayerManager {
             editor.putStringSet("string_keys", player.getStringData().keySet());
             for (Map.Entry<String, String> entry : player.getStringData().entrySet())
                 editor.putString(entry.getKey(), entry.getValue());
+
+            editor.putStringSet("boolean_keys", player.getBooleanData().keySet());
+            for (Map.Entry<String, Boolean> entry : player.getBooleanData().entrySet())
+                editor.putBoolean(entry.getKey(), entry.getValue());
 
             editor.commit();
         }

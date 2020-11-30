@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.R;
 import com.shnoop.globequiz.customadapters.LanguagesAdapter;
 import com.shnoop.globequiz.gamedata.Language;
+import com.shnoop.globequiz.player.Player;
 import com.shnoop.globequiz.player.PlayerManager;
 
 import java.util.ArrayList;
@@ -28,6 +31,8 @@ public class FragmentSettings extends Fragment {
     private Spinner m_language_spinner;
     private LanguagesAdapter m_languages_adapter;
     private TextView m_language_textview;
+    private TextView m_show_relief_textview;
+    private CheckBox m_show_relief_checkbox;
     private Button m_select_button;
 
     public FragmentSettings() { m_this = this; }
@@ -55,6 +60,16 @@ public class FragmentSettings extends Fragment {
         m_language_spinner.setOnItemSelectedListener(m_language_select_listener);
 
         m_language_textview = view.findViewById(R.id.textViewLanguage);
+        m_show_relief_textview = view.findViewById(R.id.textViewShowRelief);
+
+        m_show_relief_checkbox = view.findViewById(R.id.checkBoxShowRelief);
+
+        Player player = MainActivity.getPlayerManager().getCurrentPlayer();
+        Boolean show_relief = player.getBooleanData("show_relief");
+        if(show_relief != null) m_show_relief_checkbox.setChecked(show_relief);
+        else m_show_relief_checkbox.setChecked(true);
+
+        m_show_relief_checkbox.setOnCheckedChangeListener(showReliefListener);
 
         updateStrings(getContext());
 
@@ -67,6 +82,7 @@ public class FragmentSettings extends Fragment {
         Resources resources = MainActivity.getResourcesByLocal(context, language);
 
         m_language_textview.setText(resources.getString(R.string.language));
+        m_show_relief_textview.setText(resources.getString(R.string.show_relief));
         m_select_button.setText(resources.getString(R.string.select_player_button));
     }
 
@@ -81,6 +97,21 @@ public class FragmentSettings extends Fragment {
 
             transaction.remove(m_this);
             transaction.add(R.id.fragmentContainer, playerSelect).addToBackStack("onePop").commit();
+        }
+    };
+
+    private CompoundButton.OnCheckedChangeListener showReliefListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton checkBox, boolean isChecked) {
+
+            Player player = MainActivity.getPlayerManager().getCurrentPlayer();
+            player.addBooleanData("show_relief", isChecked);
+
+            FragmentGlobe globeFragment = (FragmentGlobe) getActivity().getSupportFragmentManager()
+                    .findFragmentByTag("globe");
+
+            if(isChecked) globeFragment.showRelief();
+            else globeFragment.hideRelief();
         }
     };
 

@@ -22,6 +22,7 @@ public:
     glm::mat4 getProjectionViewMatrix();
 
     GLuint getTexture() { return m_texture; }
+    CubeMapCamera getCamera() { return m_camera; }
 
 protected:
 

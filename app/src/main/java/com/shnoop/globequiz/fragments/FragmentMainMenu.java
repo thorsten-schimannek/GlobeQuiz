@@ -111,6 +111,7 @@ public class FragmentMainMenu extends Fragment {
         m_button_single_player.setText(resources.getText(R.string.single_player));
         m_button_globe.setText(resources.getText(R.string.globe_button_label));
         m_button_settings.setText(resources.getText(R.string.settings));
+        m_button_about.setText(resources.getText(R.string.about_button));
 
         m_player_name.setText(resources.getString(R.string.player_name_format, m_player.getName()));
 

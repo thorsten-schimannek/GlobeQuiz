@@ -60,26 +60,19 @@ void CubeMapCamera::switchToFace(int faceIndex) {
     updateViewMatrix();
 }
 
-void CubeMapCamera::getPosition(float *position) {
+glm::mat4 CubeMapCamera::getViewMatrix() {
 
-    position[0] = m_center[0];
-    position[1] = m_center[1];
-    position[2] = m_center[2];
+    return m_view_matrix;
 }
 
-void CubeMapCamera::getViewMatrix(glm::mat4 *view_matrix) {
+glm::mat4 CubeMapCamera::getProjectionMatrix() {
 
-    *view_matrix = m_view_matrix;
+    return m_projection_matrix;
 }
 
-void CubeMapCamera::getProjectionMatrix(glm::mat4 *projection_matrix) {
+glm::mat4 CubeMapCamera::getProjectionViewMatrix() {
 
-    *projection_matrix = m_projection_matrix;
-}
-
-void CubeMapCamera::getProjectionViewMatrix(glm::mat4 *projection_view_matrix) {
-
-    *projection_view_matrix = m_projection_view_matrix;
+    return m_projection_view_matrix;
 }
 
 void CubeMapCamera::createProjectionMatrix() {

@@ -25,7 +25,10 @@ import android.widget.Toast;
 
 import com.shnoop.globequiz.R;
 import com.shnoop.globequiz.RendererWrapper;
+import com.shnoop.globequiz.gamedata.Achievement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,6 +50,9 @@ public class FragmentGlobe extends Fragment {
         Long,
         None
     }
+
+    private static final String ARG_RELIEF = "relief";
+    private boolean m_relief;
 
     private Mode m_mode;
 
@@ -112,6 +118,24 @@ public class FragmentGlobe extends Fragment {
             public void run() {
                 m_renderer_wrapper.show(f_layer, f_file, f_id, f_color);
             }});
+    }
+
+    public static FragmentGlobe newInstance(boolean relief) {
+
+        FragmentGlobe fragment = new FragmentGlobe();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_RELIEF, relief);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            m_relief = (Boolean) getArguments().getSerializable(ARG_RELIEF);
+        }
     }
 
     @Override
@@ -186,7 +210,7 @@ public class FragmentGlobe extends Fragment {
                m_renderer_wrapper.show(2, "land_boundaries.lines.jet", -1, new double[]{0.3, 0.3, 0.3, 1.});
                m_renderer_wrapper.show(2, "long_lat_lines.lines.jet", -1, new double[]{0.7, 0.7, 0.7, 1.});
 
-               m_renderer_wrapper.setRelief("relief.png");
+               if(m_relief) m_renderer_wrapper.setRelief("relief.png");
            }
        });
 
@@ -262,6 +286,42 @@ public class FragmentGlobe extends Fragment {
         }
 
         return true;
+    }
+
+    public void hideRelief() {
+
+        m_relief = false;
+
+        m_glSurfaceView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+
+                m_renderer_wrapper.hideRelief();
+            }
+        });
+
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_RELIEF, m_relief);
+
+        this.setArguments(args);
+    }
+
+    public void showRelief() {
+
+        m_relief = true;
+
+        m_glSurfaceView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+
+                m_renderer_wrapper.setRelief("relief.png");
+            }
+        });
+
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_RELIEF, m_relief);
+
+        this.setArguments(args);
     }
 
     @Override

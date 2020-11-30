@@ -21,10 +21,9 @@ public:
 
     void switchToFace(int faceIndex);
 
-    void getPosition(float *position);
-    void getViewMatrix(glm::mat4 *view_matrix);
-    void getProjectionMatrix(glm::mat4 *projection_matrix);
-    void getProjectionViewMatrix(glm::mat4 *projection_view_matrix);
+    glm::mat4 getViewMatrix();
+    glm::mat4 getProjectionMatrix();
+    glm::mat4 getProjectionViewMatrix();
 
     void createProjectionMatrix();
     void updateViewMatrix();

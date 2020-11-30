@@ -151,6 +151,15 @@ public class FragmentPlayerSelect extends Fragment implements PlayersAdapter.Pla
 
         achievementManager.updateAchievements();
 
+        Boolean showRelief = player.getBooleanData("show_relief");
+        FragmentGlobe globeFragment = (FragmentGlobe) getActivity().getSupportFragmentManager()
+                .findFragmentByTag("globe");
+
+        if(showRelief != null) {
+            if(showRelief) globeFragment.showRelief();
+            else globeFragment.hideRelief();
+        }
+
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(1).getId(),
                 fragmentManager.POP_BACK_STACK_INCLUSIVE);

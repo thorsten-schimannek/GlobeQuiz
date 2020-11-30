@@ -78,5 +78,6 @@
     <string name="show_achievements">Weiter</string>
     <string name="achievements_earned">Du hast %1$d Errungenschaften freigeschaltet!</string>
     <string name="achievements_list">Errungenschaften</string>
+    <string name="show_relief">Zeige Relief:</string>
 
 </resources>

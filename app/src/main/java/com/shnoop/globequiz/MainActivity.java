@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         m_game_data = new GameData(this,
                 "languages_data.json", "game_data.json");
 
+        boolean relief = true;
         if(m_player_manager.getState() == PlayerManager.PlayerManagerState.PLAYER_SELECTED) {
 
             Player player = m_player_manager.getCurrentPlayer();
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
             Integer maxCorrect = player.getIntegerData("max_correct");
             if(maxCorrect != null) achievementManager.setMaxCorrect(maxCorrect, false);
 
+            Boolean showRelief = player.getBooleanData("show_relief");
+            if(showRelief != null) relief = showRelief;
+
             achievementManager.updateAchievements();
         }
         else {
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         m_broadcast_receiver = new RegionPickBroadCastReceiver();
         registerReceiver(m_broadcast_receiver, new IntentFilter("region_picked"));
 
-        m_globe_fragment = new FragmentGlobe();
+        m_globe_fragment = FragmentGlobe.newInstance(relief);
         FragmentTransaction transactionGlobe = getSupportFragmentManager().beginTransaction();
         transactionGlobe.add(R.id.globeHolderFrameLayout, m_globe_fragment, "globe").commit();
         getSupportFragmentManager().executePendingTransactions();

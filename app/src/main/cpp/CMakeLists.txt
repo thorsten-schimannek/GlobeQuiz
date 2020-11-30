@@ -23,6 +23,7 @@ add_library( # Sets the name of the library.
              Globe.cpp
              objects/Rectangle.cpp
              shaders/GlobeRectangleShaderProgram.cpp
+             shaders/GlobeRectangleShaderProgramRelief.cpp
              shaders/TriangleShaderProgram.cpp
              shaders/TriangleShaderProgramRelief.cpp
              shaders/LineShaderProgram.cpp

@@ -43,6 +43,7 @@ void GlobeRenderer::initialize() {
     // For this reason we make sure that the destructor of the old object is called first.
     m_rectangle = nullptr;
     m_shader_program_rectangle = nullptr;
+    m_shader_program_rectangle_relief = nullptr;
     m_color_picking_target = nullptr;
     m_cubemaps.clear();
 
@@ -53,6 +54,10 @@ void GlobeRenderer::initialize() {
     m_shader_program_rectangle = std::make_unique<GlobeRectangleShaderProgram>(
             m_asset_manager->getContentString("shader/rectangle_vertex_shader.glsl"),
             m_asset_manager->getContentString("shader/rectangle_fragment_shader.glsl"));
+
+    m_shader_program_rectangle_relief = std::make_unique<GlobeRectangleShaderProgramRelief>(
+            m_asset_manager->getContentString("shader/rectangle_relief_vertex_shader.glsl"),
+            m_asset_manager->getContentString("shader/rectangle_relief_fragment_shader.glsl"));
 
     m_color_picking_target = std::make_unique<RenderTarget>(m_width, m_height);
 
@@ -108,6 +113,8 @@ void GlobeRenderer::setReliefTexture(std::string filename) {
     m_relief_texture_set = true;
     m_relief_texture_filename = filename;
 
+    if(m_cubemap_invalid.size() > 0) m_cubemap_invalid[0] = true;
+
     if(m_asset_manager != nullptr)
         m_relief_texture_id = m_asset_manager->loadTextureAsset(
                 AssetTexture::TEXTURE_2D, filename);
@@ -116,6 +123,7 @@ void GlobeRenderer::setReliefTexture(std::string filename) {
 void GlobeRenderer::hideReliefTexture() {
 
     m_relief_texture_set = false;
+    if(m_cubemap_invalid.size() > 0) m_cubemap_invalid[0] = true;
 }
 
 void GlobeRenderer::showAsset(unsigned int layer, std::string file, Color color) {
@@ -248,6 +256,7 @@ void GlobeRenderer::drawFrame() {
     if(m_relief_texture_set) {
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(m_asset_manager->getTriangleShaderRelief(m_triangle_shader_relief_id).getTextureUniform(), 0);
+        glUniform1i(m_shader_program_rectangle_relief->getTextureUniformLocation(), 0);
         m_asset_manager->getTexture(m_relief_texture_id)->bindTexture(GL_TEXTURE_2D);
     }
 
@@ -259,7 +268,7 @@ void GlobeRenderer::updateCubeMaps() {
 
     if(m_cubemap_invalid[0]) {
 
-        updateCubeMap(0, m_ocean_color);
+        updateCubeMap(0, m_ocean_color, m_relief_texture_set);
         m_cubemap_invalid[0] = false;
     }
 
@@ -316,14 +325,28 @@ void GlobeRenderer::drawGlobeDirectly(float x_rotation, float y_rotation, float 
     auto rotation_matrix = glm::rotate(glm::radians(y_rotation), glm::vec3(1.f,0.f,0.f));
     rotation_matrix = rotation_matrix * glm::rotate(glm::radians(x_rotation), glm::vec3(0.f,1.f,0.f));
 
-    Color& ocean = m_ocean_color;
-    m_shader_program_rectangle->useProgram();
-    m_shader_program_rectangle->setMatrices(m_orthographic_view_projection_matrix, rotation_matrix);
-    m_shader_program_rectangle->setColor(glm::vec4(ocean.r, ocean.g, ocean.b, ocean.a));
-    m_shader_program_rectangle->setZoom(zoom);
-    m_shader_program_rectangle->setDirectRendering(true);
-    m_shader_program_rectangle->setCubeMapTexture(0);
-    m_rectangle->draw(m_shader_program_rectangle->getPositionAttributeLocation());
+    Color &ocean = m_ocean_color;
+    if(m_relief_texture_set) {
+
+        m_shader_program_rectangle_relief->useProgram();
+        m_shader_program_rectangle_relief->setMatrices(m_orthographic_view_projection_matrix,
+                                                glm::inverse(rotation_matrix));
+        m_shader_program_rectangle_relief->setColor(glm::vec4(ocean.r, ocean.g, ocean.b, ocean.a));
+        m_shader_program_rectangle_relief->setZoom(zoom);
+        m_shader_program_rectangle_relief->setDirectRendering(true);
+        m_rectangle->draw(m_shader_program_rectangle->getPositionAttributeLocation());
+    }
+    else {
+
+        m_shader_program_rectangle->useProgram();
+        m_shader_program_rectangle->setMatrices(m_orthographic_view_projection_matrix,
+                                                rotation_matrix);
+        m_shader_program_rectangle->setColor(glm::vec4(ocean.r, ocean.g, ocean.b, ocean.a));
+        m_shader_program_rectangle->setZoom(zoom);
+        m_shader_program_rectangle->setDirectRendering(true);
+        m_shader_program_rectangle->setCubeMapTexture(0);
+        m_rectangle->draw(m_shader_program_rectangle->getPositionAttributeLocation());
+    }
 
     glEnable(GL_CULL_FACE);
 
@@ -370,7 +393,7 @@ void GlobeRenderer::drawGlobeDirectly(float x_rotation, float y_rotation, float 
     glDisable(GL_CULL_FACE);
 }
 
-void GlobeRenderer::updateCubeMap(unsigned int layer, Color background) {
+void GlobeRenderer::updateCubeMap(unsigned int layer, Color background, bool relief) {
 
     CubeMap& cubemap = *m_cubemaps[layer];
 
@@ -390,6 +413,27 @@ void GlobeRenderer::updateCubeMap(unsigned int layer, Color background) {
 
         glm::mat4 projectionView = cubemap.getProjectionViewMatrix();
         auto identityMatrix = glm::mat4(1.0f);
+
+        if(relief) {
+
+            // This is a bit of a hack and should eventually be refactored
+
+            glm::mat4 rectView = cubemap.getCamera().getViewMatrix();
+
+            glm::mat4 projection;
+            if(face == 0) projection = glm::diagonal4x4(glm::vec4(-1.f, +1.f, -1.f, 1.f));
+            else if(face == 1) projection = glm::diagonal4x4(glm::vec4(-1.f, +1.f, -1.f, 1.f));
+            else projection = identityMatrix;
+
+            m_shader_program_rectangle_relief->useProgram();
+            m_shader_program_rectangle_relief->setMatrices(
+                    projection, cubemap.getCamera().getViewMatrix());
+            m_shader_program_rectangle_relief->setColor(glm::vec4(bg.r, bg.g, bg.b, bg.a));
+            m_shader_program_rectangle->setZoom(1.f);
+            m_shader_program_rectangle->setDirectRendering(false);
+            m_rectangle->draw(
+                    m_shader_program_rectangle_relief->getPositionAttributeLocation());
+        }
 
         int triangleShaderId = m_relief_texture_set ? m_triangle_shader_relief_id : m_triangle_shader_id;
         AssetShader* triangleShader = m_asset_manager->getShader(triangleShaderId);
