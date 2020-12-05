@@ -2,7 +2,9 @@ package com.shnoop.globequiz.gamedata;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.Handler;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -18,6 +20,10 @@ import java.util.List;
 
 public class GameData {
 
+    public interface LanguageChangeListener {
+        void onLanguageChanged(Language language);
+    }
+
     private ArrayList<Language> m_languages;
     private Language m_current_language;
 
@@ -28,7 +34,22 @@ public class GameData {
     private List<Country> m_countries;
     private List<Region> m_regions;
 
+    private LanguageChangeListener m_language_change_listener;
+
+    public GameData(Context context, String languageDataFile, String gameDataFile,
+                    LanguageChangeListener languageChangeListener) {
+
+        m_language_change_listener = languageChangeListener;
+
+        m_game_data_file = gameDataFile;
+
+        loadLanguages(context, languageDataFile);
+        setCurrentLanguage(context, "en");
+    }
+
     public GameData(Context context, String languageDataFile, String gameDataFile) {
+
+        m_language_change_listener = null;
 
         m_game_data_file = gameDataFile;
 
@@ -205,6 +226,9 @@ public class GameData {
                 break;
             }
         }
+
+        if(m_language_change_listener != null)
+            m_language_change_listener.onLanguageChanged(m_current_language);
 
         return;
     }

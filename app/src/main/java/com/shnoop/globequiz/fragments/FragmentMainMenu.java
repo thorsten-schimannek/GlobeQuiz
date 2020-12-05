@@ -212,6 +212,7 @@ public class FragmentMainMenu extends Fragment {
         public void onClick(View v) {
 
             m_globe_background.setMode(FragmentGlobe.Mode.Globe);
+            m_globe_background.showSearch();
             getActivity().getSupportFragmentManager().popBackStack();
         }
     };

@@ -51,8 +51,10 @@ void main() {
 
         float temp = u_Zoom - 4.;
         temp = max(temp / 10., 0.);
+        temp = min(1., temp);
         relief.a = .5 + relief.a / 2.;
-        relief.a = relief.a + temp;
+        //relief.a = relief.a + temp;
+        relief.a = .85 * temp + relief.a * (1. - temp);
         relief.a = min(relief.a, 1.);
 
         vec4 color = vec4(u_Color.rgb * relief.a, u_Color.a);

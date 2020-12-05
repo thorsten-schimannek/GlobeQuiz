@@ -45,6 +45,7 @@ public class Country {
         }
     }
 
+    public String getFlagFile() { return "flags/" + m_id + ".png"; }
     public int getId() { return m_id; }
     public String getName() { return m_name; }
     public String getCapital() { return m_capital; }

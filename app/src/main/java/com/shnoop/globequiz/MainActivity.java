@@ -1,5 +1,6 @@
 package com.shnoop.globequiz;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,13 +31,15 @@ import com.shnoop.globequiz.fragments.FragmentGlobe;
 import com.shnoop.globequiz.fragments.FragmentMainMenu;
 import com.shnoop.globequiz.gamedata.AchievementManager;
 import com.shnoop.globequiz.gamedata.GameData;
+import com.shnoop.globequiz.gamedata.Language;
 import com.shnoop.globequiz.player.Player;
 import com.shnoop.globequiz.player.PlayerManager;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GameData.LanguageChangeListener {
 
     public interface ReceiverFragment{ void unregisterBroadcastReceiver(); }
 
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         m_player_manager = new PlayerManager(this);
 
         m_game_data = new GameData(this,
-                "languages_data.json", "game_data.json");
+                "languages_data.json", "game_data.json", this);
 
         boolean relief = true;
         if(m_player_manager.getState() == PlayerManager.PlayerManagerState.PLAYER_SELECTED) {
@@ -144,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         if(m_globe_fragment.getMode() == FragmentGlobe.Mode.Globe) {
 
             m_globe_fragment.setMode(FragmentGlobe.Mode.Idle);
+            m_globe_fragment.hideSearch();
             showMenu(this);
         }
         else if(back_stack_count > 0){
@@ -340,4 +345,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public void onLanguageChanged(Language language) {
+
+        Handler handler = new Handler();
+        final Activity activity = this;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                Intent intent = new Intent("language_changed");
+                activity.sendBroadcast(intent);
+            }
+        });
+    }
 }

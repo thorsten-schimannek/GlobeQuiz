@@ -1,16 +1,23 @@
 package com.shnoop.globequiz.fragments;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Color;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.core.view.GestureDetectorCompat;
+
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -19,18 +26,27 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.R;
 import com.shnoop.globequiz.RendererWrapper;
+import com.shnoop.globequiz.customadapters.CountriesAdapter;
 import com.shnoop.globequiz.gamedata.Achievement;
+import com.shnoop.globequiz.gamedata.Country;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 
 /**
@@ -59,6 +75,11 @@ public class FragmentGlobe extends Fragment {
     private float m_sensitivity = .3f;
 
     private TextView m_fpsCounter;
+    private SearchView m_searchView;
+    private CardView m_searchCardView;
+    private LinearLayout m_searchLinearLayout;
+    private ListView m_searchSuggestions;
+    private CountriesAdapter m_countriesAdapter;
 
     private GLSurfaceView m_glSurfaceView;
     private boolean m_renderer_set = false;
@@ -72,6 +93,8 @@ public class FragmentGlobe extends Fragment {
     private String m_picking_region_asset;
 
     private Timer m_timer;
+
+    private int m_selected_region = -1;
 
     public FragmentGlobe() {
     }
@@ -152,12 +175,26 @@ public class FragmentGlobe extends Fragment {
         FrameLayout frameLayout = view.findViewById(R.id.frame_layout);
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT,
+                MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.TOP);
 
         m_fpsCounter.setLayoutParams(params);
 
         frameLayout.addView(m_fpsCounter);
+
+        m_searchCardView = view.findViewById(R.id.cardViewSearch);
+        m_searchLinearLayout = view.findViewById(R.id.linearLayoutSearch);
+
+        m_searchView = view.findViewById(R.id.searchViewCountry);
+        m_searchView.setOnCloseListener(m_search_on_close_listener);
+        m_searchView.setOnSearchClickListener(m_search_on_click_listener);
+        m_searchView.setOnQueryTextListener(m_on_query_text_listener);
+
+        m_searchSuggestions = view.findViewById(R.id.listViewSearchCountries);
+        m_countriesAdapter = new CountriesAdapter(MainActivity.getGameData().getCountries(),
+                getContext());
+        m_searchSuggestions.setAdapter(m_countriesAdapter);
+        m_searchSuggestions.setOnItemClickListener(m_on_item_click_listener);
 
         m_glSurfaceView = view.findViewById(R.id.glSurfaceView);
 
@@ -218,9 +255,18 @@ public class FragmentGlobe extends Fragment {
 
         m_mode = Mode.Idle;
 
+        getActivity().registerReceiver(m_language_changed_receiver, new IntentFilter("language_changed"));
+
         startSpinning();
 
         return view;
+    }
+
+    public void updateLanguage() {
+
+        m_countriesAdapter = new CountriesAdapter(MainActivity.getGameData().getCountries(),
+                getContext());
+        m_searchSuggestions.setAdapter(m_countriesAdapter);
     }
 
     private void startSpinning() {
@@ -322,6 +368,21 @@ public class FragmentGlobe extends Fragment {
         args.putSerializable(ARG_RELIEF, m_relief);
 
         this.setArguments(args);
+    }
+
+    public void showSearch() {
+
+        m_searchView.setVisibility(View.VISIBLE);
+        m_searchSuggestions.setVisibility(View.VISIBLE);
+    }
+
+    public void hideSearch() {
+
+        m_searchView.setIconified(true);
+        m_searchView.setIconified(true);
+        m_countriesAdapter.filter("");
+        m_searchView.setVisibility(View.GONE);
+        m_searchSuggestions.setVisibility(View.GONE);
     }
 
     @Override
@@ -482,8 +543,8 @@ public class FragmentGlobe extends Fragment {
                 @Override
                 public void run() {
 
-                    int region = m_renderer_wrapper.getRegionFromPoint(m_picking_region_asset, x, y);
-                    setSelectedRegion(region, PressType.Short);
+                    m_selected_region = m_renderer_wrapper.getRegionFromPoint(m_picking_region_asset, x, y);
+                    setSelectedRegion(m_selected_region, PressType.Short);
                 }
             });
 
@@ -571,4 +632,91 @@ public class FragmentGlobe extends Fragment {
             }
         });
     }
+
+    private SearchView.OnCloseListener m_search_on_close_listener = new SearchView.OnCloseListener() {
+
+        @Override
+        public boolean onClose() {
+
+            FrameLayout.LayoutParams flParams = new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+
+            m_searchCardView.setLayoutParams(flParams);
+            m_searchLinearLayout.setLayoutParams(flParams);
+            m_searchView.setLayoutParams(llParams);
+
+            m_searchSuggestions.setVisibility(View.GONE);
+
+            if(m_selected_region != -1) setSelectedRegion(m_selected_region, PressType.Short);
+
+            return false;
+        }
+    };
+
+    private View.OnClickListener m_search_on_click_listener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+
+            FrameLayout.LayoutParams flParams = new FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+            LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+
+            m_searchCardView.setLayoutParams(flParams);
+            m_searchLinearLayout.setLayoutParams(flParams);
+            m_searchView.setLayoutParams(llParams);
+
+            m_searchSuggestions.setVisibility(View.VISIBLE);
+
+            m_countriesAdapter.filter("");
+
+            setSelectedRegion(-1, PressType.Short);
+        }
+    };
+
+    private SearchView.OnQueryTextListener m_on_query_text_listener = new SearchView.OnQueryTextListener() {
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+
+            for(Country country : MainActivity.getGameData().getCountries()) {
+                if(country.getName().equals(query)) {
+                    m_selected_region = country.getId();
+                    double lon = country.getCentroidLongitude();
+                    double lat = country.getCentroidLatitude();
+                    rotateTo((float) lon, (float) lat);
+                }
+            }
+
+            m_searchView.setIconified(true);
+            m_searchView.setIconified(true);
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            m_countriesAdapter.filter(newText);
+            return false;
+        }
+    };
+
+    private AdapterView.OnItemClickListener m_on_item_click_listener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            Country country = (Country) parent.getItemAtPosition(position);
+            m_searchView.setQuery(country.getName(), true);
+        }
+    };
+
+    private BroadcastReceiver m_language_changed_receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction() != null
+                    && intent.getAction().equalsIgnoreCase("language_changed")) {
+
+                updateLanguage();
+            }
+        }
+    };
 }

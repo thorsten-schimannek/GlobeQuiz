@@ -18,9 +18,11 @@ void main() {
     vec4 relief = texture2D(u_Texture, vec2(norm_phi, norm_theta));
     float temp = u_Zoom - 4.;
     temp = max(temp / 10., 0.);
+    temp = min(1., temp);
     relief.a = 1.5 - relief.a;
     relief.a = clamp(relief.a, 0., 1.);
-    relief.a = relief.a + temp;
+    // relief.a = relief.a + temp;
+    relief.a = .85 * temp + relief.a * (1. - temp);
     relief.a = min(relief.a, 1.);
 
     if(!u_directRendering) {

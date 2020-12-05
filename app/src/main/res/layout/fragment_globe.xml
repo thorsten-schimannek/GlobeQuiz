@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frame_layout"
     android:layout_width="match_parent"
@@ -10,5 +11,41 @@
     <android.opengl.GLSurfaceView
         android:id="@+id/glSurfaceView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:isScrollContainer="false" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardBackgroundColor="@color/colorBackground"
+        app:cardCornerRadius="5dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchViewCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorBackground"
+                android:visibility="gone"
+                app:iconifiedByDefault="true">
+
+            </androidx.appcompat.widget.SearchView>
+
+            <ListView
+                android:id="@+id/listViewSearchCountries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
 </FrameLayout>
