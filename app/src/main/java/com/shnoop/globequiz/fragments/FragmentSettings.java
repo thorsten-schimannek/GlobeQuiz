@@ -104,8 +104,10 @@ public class FragmentSettings extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton checkBox, boolean isChecked) {
 
-            Player player = MainActivity.getPlayerManager().getCurrentPlayer();
+            PlayerManager playerManager = MainActivity.getPlayerManager();
+            Player player = playerManager.getCurrentPlayer();
             player.addBooleanData("show_relief", isChecked);
+            playerManager.updatePreferences(getContext());
 
             FragmentGlobe globeFragment = (FragmentGlobe) getActivity().getSupportFragmentManager()
                     .findFragmentByTag("globe");

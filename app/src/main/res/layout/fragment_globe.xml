@@ -19,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:visibility="gone"
         app:cardBackgroundColor="@color/colorBackground"
         app:cardCornerRadius="5dp"
         app:cardUseCompatPadding="true">
@@ -27,14 +28,15 @@
             android:id="@+id/linearLayoutSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchViewCountry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorBackground"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:iconifiedByDefault="true">
 
             </androidx.appcompat.widget.SearchView>
@@ -43,7 +45,7 @@
                 android:id="@+id/listViewSearchCountries"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

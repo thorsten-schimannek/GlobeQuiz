@@ -189,7 +189,8 @@ public class FragmentScore extends Fragment {
         public void onClick(View view) {
 
             getActivity().getSupportFragmentManager().popBackStack();
-            MainActivity.showMenu((AppCompatActivity) getActivity());
+            MainActivity.showMenu((AppCompatActivity) getActivity(),
+                    ((MainActivity) getActivity()).getStartGameState());
         }
     };
 

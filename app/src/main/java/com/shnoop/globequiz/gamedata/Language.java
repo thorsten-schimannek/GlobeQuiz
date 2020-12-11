@@ -14,7 +14,9 @@ public class Language {
         m_name = name;
         m_strings_file = stringsFile;
         m_flag_file = flagFile;
-        m_display_name = new Locale(m_name).getDisplayName();
+
+        Locale locale = new Locale(m_name);
+        m_display_name = locale.getDisplayName(locale);
     }
 
     public String getName() { return m_name; }

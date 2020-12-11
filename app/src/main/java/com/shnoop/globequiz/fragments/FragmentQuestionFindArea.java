@@ -34,6 +34,7 @@ public class FragmentQuestionFindArea extends FragmentQuestion {
     private QuestionFindArea m_question;
 
     private TextView m_progress_text_view;
+    private TextView m_question_text_view;
     private Button m_next_button;
 
     private Handler m_handler;
@@ -79,8 +80,8 @@ public class FragmentQuestionFindArea extends FragmentQuestion {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question_find_area, container, false);
 
-        TextView question_text_view = view.findViewById(R.id.questionTextView);
-        question_text_view.setText(m_question_text);
+        m_question_text_view = view.findViewById(R.id.questionTextView);
+        m_question_text_view.setText(m_question_text);
 
         m_progress_text_view = view.findViewById(R.id.progressTextView);
 

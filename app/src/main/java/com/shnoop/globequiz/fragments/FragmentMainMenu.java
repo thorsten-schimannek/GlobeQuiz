@@ -46,6 +46,8 @@ public class FragmentMainMenu extends Fragment {
 
     private Player m_player;
 
+    private Fragment.SavedState m_start_game_state = null;
+
     public FragmentMainMenu() { m_this = this; }
 
     @Override
@@ -86,6 +88,11 @@ public class FragmentMainMenu extends Fragment {
         if(validatePlayer()) updateStrings(getContext());
 
         return view;
+    }
+
+    public void setStartGameState(Fragment.SavedState state) {
+
+        m_start_game_state = state;
     }
 
     private void resetLayouts() {
@@ -201,9 +208,14 @@ public class FragmentMainMenu extends Fragment {
         public void onClick(View v) {
 
             FragmentStartGame startGame = new FragmentStartGame();
+
+            if(m_start_game_state != null)
+                startGame.setInitialSavedState(m_start_game_state);
+
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.remove(m_this);
-            transaction.add(R.id.fragmentContainer, startGame, "startGame").addToBackStack(null).commit();
+            transaction.add(R.id.fragmentContainer, startGame, "startGame")
+                    .addToBackStack("startGame").commit();
         }
     };
 

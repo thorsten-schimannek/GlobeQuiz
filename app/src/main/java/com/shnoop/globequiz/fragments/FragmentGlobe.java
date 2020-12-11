@@ -372,8 +372,7 @@ public class FragmentGlobe extends Fragment {
 
     public void showSearch() {
 
-        m_searchView.setVisibility(View.VISIBLE);
-        m_searchSuggestions.setVisibility(View.VISIBLE);
+        m_searchCardView.setVisibility(View.VISIBLE);
     }
 
     public void hideSearch() {
@@ -381,8 +380,7 @@ public class FragmentGlobe extends Fragment {
         m_searchView.setIconified(true);
         m_searchView.setIconified(true);
         m_countriesAdapter.filter("");
-        m_searchView.setVisibility(View.GONE);
-        m_searchSuggestions.setVisibility(View.GONE);
+        m_searchCardView.setVisibility(View.GONE);
     }
 
     @Override

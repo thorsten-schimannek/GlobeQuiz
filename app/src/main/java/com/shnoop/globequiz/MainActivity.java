@@ -12,6 +12,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 
 import com.shnoop.globequiz.fragments.FragmentGlobe;
 import com.shnoop.globequiz.fragments.FragmentMainMenu;
+import com.shnoop.globequiz.fragments.FragmentStartGame;
 import com.shnoop.globequiz.gamedata.AchievementManager;
 import com.shnoop.globequiz.gamedata.GameData;
 import com.shnoop.globequiz.gamedata.Language;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements GameData.Language
     private ImageButton m_wiki_button;
     private RegionPickBroadCastReceiver m_broadcast_receiver;
     private int m_selected_region;
+
+    private Fragment.SavedState m_start_game_state = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,14 +122,25 @@ public class MainActivity extends AppCompatActivity implements GameData.Language
         transactionGlobe.add(R.id.globeHolderFrameLayout, m_globe_fragment, "globe").commit();
         getSupportFragmentManager().executePendingTransactions();
 
-        showMenu(this);
+        showMenu(this, m_start_game_state);
     }
 
-    public static void showMenu(AppCompatActivity activity) {
+    public void setStartGameState(Fragment.SavedState state) {
+
+        m_start_game_state = state;
+    }
+
+    public Fragment.SavedState getStartGameState() {
+
+        return m_start_game_state;
+    }
+
+    public static void showMenu(AppCompatActivity activity, Fragment.SavedState startGameState) {
 
         FragmentMainMenu menuFragment = new FragmentMainMenu();
+        menuFragment.setStartGameState(startGameState);
         FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.fragmentContainer, menuFragment)
+        transaction.add(R.id.fragmentContainer, menuFragment, "menu")
                 .addToBackStack("menu").commit();
     }
 
@@ -149,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements GameData.Language
 
             m_globe_fragment.setMode(FragmentGlobe.Mode.Idle);
             m_globe_fragment.hideSearch();
-            showMenu(this);
+            showMenu(this, m_start_game_state);
         }
         else if(back_stack_count > 0){
 
@@ -169,9 +184,21 @@ public class MainActivity extends AppCompatActivity implements GameData.Language
                 else if (name.equals("score")) {
 
                     fragmentManager.popBackStack();
-                    showMenu(this);
+                    showMenu(this, m_start_game_state);
                 }
                 else if (name.equals("menu")) { finish(); }
+                else if (name.equals("startGame")) {
+
+                    FragmentStartGame fragmentStartGame =
+                            (FragmentStartGame) fragmentManager.findFragmentByTag("startGame");
+                    m_start_game_state = fragmentManager.saveFragmentInstanceState(fragmentStartGame);
+
+                    fragmentManager.popBackStack();
+
+                    FragmentMainMenu fragmentMainMenu =
+                            (FragmentMainMenu) fragmentManager.findFragmentByTag("menu");
+                    fragmentMainMenu.setStartGameState(m_start_game_state);
+                }
             }
             else {
                 fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(1).getId(),

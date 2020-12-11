@@ -30,6 +30,8 @@ import java.util.List;
 
 public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
+    private FragmentStartGame m_this;
+
     private Button m_start_game_button;
     private TextView m_select_questions_textview;
     private TextView m_select_regions_textview;
@@ -45,7 +47,7 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
     private ArrayList<QuestionListItem> m_questions_list;
     private QuestionsAdapter m_questions_adapter;
 
-    int m_number_of_countries;
+    private int m_number_of_countries;
 
     public FragmentStartGame() {
         // Required empty public constructor
@@ -59,6 +61,9 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        m_this = this;
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start_game, container, false);
 
@@ -142,6 +147,10 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
     private View.OnClickListener startGameButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            ((MainActivity) getActivity()).setStartGameState(
+                    getActivity().getSupportFragmentManager().saveFragmentInstanceState(m_this)
+            );
 
             // Get number of countries to show in this game
             int numberQuestions = calculateProgress(m_number_of_questions_seekbar.getProgress());

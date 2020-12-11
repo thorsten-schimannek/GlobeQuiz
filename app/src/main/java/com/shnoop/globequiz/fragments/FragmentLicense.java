@@ -11,10 +11,31 @@ import android.widget.EditText;
 
 import com.shnoop.globequiz.R;
 
-public class FragmentHappyBunny extends Fragment {
+public class FragmentLicense extends Fragment {
 
-    public FragmentHappyBunny() {
+    private static final String ARG_LICENSE_TEXT = "license_text";
+    private String m_license_text;
+
+    public FragmentLicense() {
         // Required empty public constructor
+    }
+
+    public static FragmentLicense newInstance(String licenseText) {
+
+        FragmentLicense fragment = new FragmentLicense();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_LICENSE_TEXT, licenseText);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            m_license_text = (String) getArguments().getSerializable(ARG_LICENSE_TEXT);
+        }
     }
 
     @Override
@@ -26,10 +47,10 @@ public class FragmentHappyBunny extends Fragment {
         EditText m_happy_bunny_edittext = view.findViewById(R.id.editViewHappyBunnyLicense);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            m_happy_bunny_edittext.setText(Html.fromHtml(getString(R.string.happy_bunny_formatted),
+            m_happy_bunny_edittext.setText(Html.fromHtml(m_license_text,
                     Html.FROM_HTML_MODE_COMPACT));
         } else {
-            m_happy_bunny_edittext.setText(Html.fromHtml(getString(R.string.happy_bunny_formatted)));
+            m_happy_bunny_edittext.setText(Html.fromHtml(m_license_text));
         }
 
         return view;

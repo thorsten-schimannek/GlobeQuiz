@@ -15,9 +15,130 @@
 ], "regions_list": [
   {"name": 0}, {"name": 1}, {"name": 2}, {"name": 3}, {"name": 4}, {"name": 5}, {"name": 6}
 ], "achievements_list": [
-  {"name": 0, "description": 0, "conditions": [{"type": "result_exp", "threshold": 200}]},
-  {"name": 1, "description": 1, "conditions": [{"type": "result_correct", "threshold": 20}]},
-  {"name": 2, "description": 2, "conditions": [{"type": "question_correct_country", "type_id": 0, "data_id": 8, "threshold": 1}]}
+  {"name": 0, "description": 0, "conditions": [
+    {"type": "result_exp", "threshold": 500}
+  ]},
+  {"name": 1, "description": 1, "conditions": [
+    {"type": "result_correct", "threshold": 20}
+  ]},
+  {"name": 2, "description": 2, "conditions": [
+    {"type": "result_correct", "threshold": 50}
+  ]},
+  {"name": 3, "description": 3, "conditions": [
+    {"type": "result_correct", "threshold": 75}
+  ]},
+  {"name": 4, "description": 4, "conditions": [
+    {"type": "result_correct", "threshold": 100}
+  ]},
+  {"name": 5, "description": 5, "conditions": [
+    {"type": "question_correct_all", "type_id": 0}
+  ]},
+  {"name": 6, "description": 6, "conditions": [
+    {"type": "question_correct_all", "type_id": 1}
+  ]},
+  {"name": 7, "description": 7, "conditions": [
+    {"type": "question_correct_all", "type_id": 3}
+  ]},
+  {"name": 8, "description": 8, "conditions": [
+    {"type": "question_correct_all", "type_id": 0},
+    {"type": "question_correct_all", "type_id": 1},
+    {"type": "question_correct_all", "type_id": 2},
+    {"type": "question_correct_all", "type_id": 3}
+  ]},
+  {"name": 9, "description": 9, "conditions": [
+    {"type": "question_correct_region_all", "type_id": 0, "region_id": 2},
+    {"type": "question_correct_region_all", "type_id": 0, "region_id": 3}
+  ]},
+  {"name": 10, "description": 10, "conditions": [
+    {"type": "question_correct_region_all", "type_id": 0, "region_id": 0}
+  ]},
+  {"name": 11, "description": 11, "conditions": [
+    {"type": "question_correct_region_all", "type_id": 0, "region_id": 1}
+  ]},
+  {"name": 12, "description": 12, "conditions": [
+    {"type": "question_correct_region_all", "type_id": 0, "region_id": 4}
+  ]},
+  {"name": 13, "description": 13, "conditions": [
+    {"type": "question_correct_region_all", "type_id": 0, "region_id": 6}
+  ]},
+  {"name": 14, "description": 14, "conditions": [
+    {"type": "question_correct_region_all", "type_id": 1, "region_id": 6}
+  ]},
+  {"name": 15, "description": 15, "conditions": [
+    {"type": "question_correct_country", "type_id": 0, "data_id": 8, "threshold": 1}
+  ]},
+  {"name": 16, "description": 16, "conditions": [
+    {"type": "question_correct", "type_id": 0, "threshold": 1000}
+  ]},
+  {"name": 17, "description": 17, "conditions": [
+    {"type": "question_correct_country", "type_id": 2, "data_id": 75, "threshold": 1}
+  ]},
+  {"name": 18, "description": 18, "conditions": [
+    {"type": "question_correct_country", "type_id": 2, "data_id": 79, "threshold": 1}
+  ]},
+  {"name": 19, "description": 19, "conditions": [
+    {"type": "question_correct_country", "type_id": 2, "data_id": 20, "threshold": 1}
+  ]},
+  {"name": 20, "description": 20, "conditions": [
+    {"type": "question_correct_country", "type_id": 2, "data_id": 17, "threshold": 1}
+  ]},
+  {"name": 21, "description": 21, "conditions": [
+    {"type": "question_correct_country", "type_id": 2, "data_id": 19, "threshold": 1}
+  ]},
+  {"name": 22, "description": 22, "conditions": [
+    {"type": "question_correct_country", "type_id": 2, "data_id": 135, "threshold": 1}
+  ]},
+  {"name": 23, "description": 23, "conditions": [
+    {"type": "question_correct_all", "type_id": 2}
+  ]},
+  {"name": 24, "description": 24, "conditions": [
+    {"type": "question_correct_country", "type_id": 3, "data_id": 5, "threshold": 1}
+  ]},
+  {"name": 25, "description": 25, "conditions": [
+    {"type": "question_correct_country", "type_id": 0, "data_id": 138, "threshold": 1}
+  ]},
+  {"name": 26, "description": 26, "conditions": [
+    {"type": "question_correct_country", "type_id": 3, "data_id": 195, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 197, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 196, "threshold": 1}
+  ]},
+  {"name": 27, "description": 27, "conditions": [
+    {"type": "question_correct_country", "type_id": 3, "data_id": 143, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 79, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 108, "threshold": 1}
+  ]},
+  {"name": 28, "description": 28, "conditions": [
+    {"type": "question_correct_country", "type_id": 3, "data_id": 225, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 210, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 93, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 94, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 83, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 70, "threshold": 1}
+  ]},
+  {"name": 29, "description": 29, "conditions": [
+    {"type": "question_correct_country", "type_id": 0, "data_id": 142, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 142, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 2, "data_id": 142, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 142, "threshold": 1}
+  ]},
+  {"name": 30, "description": 30, "conditions": [
+    {"type": "question_correct_country", "type_id": 0, "data_id": 113, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 113, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 2, "data_id": 113, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 3, "data_id": 113, "threshold": 1}
+  ]},
+  {"name": 31, "description": 31, "conditions": [
+    {"type": "question_correct_country", "type_id": 1, "data_id": 225, "threshold": 1}
+  ]},
+  {"name": 32, "description": 32, "conditions": [
+    {"type": "question_correct_country", "type_id": 1, "data_id": 237, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 133, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 128, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 86, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 44, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 35, "threshold": 1},
+    {"type": "question_correct_country", "type_id": 1, "data_id": 7, "threshold": 1}
+  ]}
 ], "countries_list": [
 {"id": "0", "name": 0, "region": 0, "population": 13805084, "color": 1, "longitude": 29.851441201921887, "latitude": -19.004204188216786, "capital": 0, "bounding_diameter": 10.30798331976827, "wiki": 0},
 {"id": "1", "name": 1, "region": 0, "population": 15972000, "color": 5, "longitude": 27.77475946369324, "latitude": -13.45824151864688, "capital": 1, "bounding_diameter": 15.2795197812858, "wiki": 1},
