@@ -50,11 +50,14 @@ public:
     void showAsset(unsigned int layer, std::string file, Color color);
     void showAsset(unsigned int layer, std::string file, int id, Color color);
     void setReliefTexture(std::string filename);
+    void showReliefTexture();
     void hideReliefTexture();
 
     int getAssetRegionFromPoint(std::string file, float x, float y);
 
     float getFPS() { return m_fps; }
+
+    int getMaxTextureSize() { return m_max_texture_size; }
 
 protected:
 
@@ -108,6 +111,7 @@ protected:
     std::unique_ptr<RenderTarget> m_color_picking_target {nullptr};
 
     int m_width, m_height;
+    int m_max_texture_size;
 
     glm::mat4 m_orthographic_view_projection_matrix;
 
@@ -118,7 +122,7 @@ protected:
 
     float m_fps;
 
-    bool m_relief_texture_set {false};
+    bool m_show_relief_texture {false};
 
     int m_triangle_shader_id;
     int m_triangle_shader_relief_id;
@@ -132,7 +136,7 @@ protected:
 
     std::stack<std::tuple<int, std::string, int, Color>> m_asset_loading_stack;
 
-    std::string m_relief_texture_filename;
+    std::unique_ptr<std::string> m_relief_texture_filename;
 
     std::unique_ptr<Rectangle> m_rectangle;
     std::unique_ptr<GlobeRectangleShaderProgram> m_shader_program_rectangle;

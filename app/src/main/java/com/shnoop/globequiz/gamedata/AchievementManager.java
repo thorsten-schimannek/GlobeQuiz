@@ -18,27 +18,7 @@ public class AchievementManager {
     public AchievementManager(QuestionManager questionManager) {
 
         m_achievements = new ArrayList<>();
-        m_correct = new ArrayList<>();
-
-        // Initialize m_correct with 0s
-        List<QuestionType> types = questionManager.getTypes();
-        for(QuestionType t : types) {
-
-            List<List<Integer>> correct_type = new ArrayList<>();
-
-            List<List<Question>> questions = t.getQuestions();
-            for(List<Question> region : questions) {
-
-                List<Integer> correct_region = new ArrayList<>();
-
-                for(int i = 0; i < region.size(); i++)
-                    correct_region.add(0);
-
-                correct_type.add(correct_region);
-            }
-
-            m_correct.add(correct_type);
-        }
+        resetProgress(questionManager);
     }
 
     public List<List<List<Integer>>> getCorrect() {
@@ -115,7 +95,10 @@ public class AchievementManager {
 
         m_correct = correct;
 
-        if(update) updateAchievements();
+        if(update) {
+            for(Achievement a : m_achievements) a.setIsEarned(false);
+            updateAchievements();
+        }
     }
 
     public void setCorrectAnswersFromString(String value) {
@@ -126,13 +109,19 @@ public class AchievementManager {
     public void setMaxScore(int maxScore, boolean update) {
 
         m_max_score = maxScore;
-        if(update) updateAchievements();
+        if(update) {
+            for(Achievement a : m_achievements) a.setIsEarned(false);
+            updateAchievements();
+        }
     }
 
     public void setMaxCorrect(int maxCorrect, boolean update) {
 
         m_max_correct = maxCorrect;
-        if(update) updateAchievements();
+        if(update) {
+            for(Achievement a : m_achievements) a.setIsEarned(false);
+            updateAchievements();
+        }
     }
 
     public void setMaxScore(int maxScore) { setMaxScore(maxScore, true); }
@@ -140,4 +129,34 @@ public class AchievementManager {
 
     public int getMaxScore() { return m_max_score; }
     public int getMaxCorrect() { return m_max_correct; }
+
+    public void resetProgress(QuestionManager questionManager) {
+
+        m_max_correct = 0;
+        m_max_score = 0;
+
+        m_correct = new ArrayList<>();
+
+        // Initialize m_correct with 0s
+        List<QuestionType> types = questionManager.getTypes();
+        for(QuestionType t : types) {
+
+            List<List<Integer>> correct_type = new ArrayList<>();
+
+            List<List<Question>> questions = t.getQuestions();
+            for(List<Question> region : questions) {
+
+                List<Integer> correct_region = new ArrayList<>();
+
+                for(int i = 0; i < region.size(); i++)
+                    correct_region.add(0);
+
+                correct_type.add(correct_region);
+            }
+
+            m_correct.add(correct_type);
+        }
+
+        for(Achievement a : m_achievements) a.setIsEarned(false);
+    }
 }

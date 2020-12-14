@@ -247,7 +247,7 @@ public class FragmentGlobe extends Fragment {
                m_renderer_wrapper.show(2, "land_boundaries.lines.jet", -1, new double[]{0.3, 0.3, 0.3, 1.});
                m_renderer_wrapper.show(2, "long_lat_lines.lines.jet", -1, new double[]{0.7, 0.7, 0.7, 1.});
 
-               if(m_relief) m_renderer_wrapper.setRelief("relief.png");
+               m_renderer_wrapper.showRelief();
            }
        });
 
@@ -360,7 +360,7 @@ public class FragmentGlobe extends Fragment {
             @Override
             public void run() {
 
-                m_renderer_wrapper.setRelief("relief.png");
+                m_renderer_wrapper.showRelief();
             }
         });
 

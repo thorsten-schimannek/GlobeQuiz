@@ -64,8 +64,16 @@ void GlobeRenderer::initialize() {
     for(int i = 0; i < m_layers; i++) m_cubemaps.push_back(std::make_unique<CubeMap>(m_cubemap_size));
     std::fill(m_cubemap_invalid.begin(), m_cubemap_invalid.end(), true);
 
-    if(m_relief_texture_set) // SIC
-       setReliefTexture(m_relief_texture_filename);
+    GLint max_size;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_size);
+    m_max_texture_size = static_cast<int>(max_size);
+
+    if(m_relief_texture_filename == nullptr) {
+        if (m_max_texture_size >= 8192) setReliefTexture("relief_high.png");
+        else if (m_max_texture_size >= 4096) setReliefTexture("relief_medium.png");
+        else setReliefTexture("relief_low.png");
+    }
+    else setReliefTexture(*m_relief_texture_filename);
 
     loadAssets();
 }
@@ -110,19 +118,23 @@ void GlobeRenderer::processAssetStack() {
 
 void GlobeRenderer::setReliefTexture(std::string filename) {
 
-    m_relief_texture_set = true;
-    m_relief_texture_filename = filename;
+    m_relief_texture_filename = std::make_unique<std::string>(filename);
 
-    if(m_cubemap_invalid.size() > 0) m_cubemap_invalid[0] = true;
-
-    if(m_asset_manager != nullptr)
+    if(m_asset_manager != nullptr) {
         m_relief_texture_id = m_asset_manager->loadTextureAsset(
                 AssetTexture::TEXTURE_2D, filename);
+    }
+}
+
+void GlobeRenderer::showReliefTexture() {
+
+    m_show_relief_texture = true;
+    if(m_cubemap_invalid.size() > 0) m_cubemap_invalid[0] = true;
 }
 
 void GlobeRenderer::hideReliefTexture() {
 
-    m_relief_texture_set = false;
+    m_show_relief_texture = false;
     if(m_cubemap_invalid.size() > 0) m_cubemap_invalid[0] = true;
 }
 
@@ -253,7 +265,7 @@ void GlobeRenderer::drawFrame() {
 
     if(m_asset_manager == nullptr) return;
 
-    if(m_relief_texture_set) {
+    if(m_show_relief_texture) {
         glActiveTexture(GL_TEXTURE0);
         glUniform1i(m_asset_manager->getTriangleShaderRelief(m_triangle_shader_relief_id).getTextureUniform(), 0);
         glUniform1i(m_shader_program_rectangle_relief->getTextureUniformLocation(), 0);
@@ -268,7 +280,7 @@ void GlobeRenderer::updateCubeMaps() {
 
     if(m_cubemap_invalid[0]) {
 
-        updateCubeMap(0, m_ocean_color, m_relief_texture_set);
+        updateCubeMap(0, m_ocean_color, m_show_relief_texture);
         m_cubemap_invalid[0] = false;
     }
 
@@ -326,7 +338,7 @@ void GlobeRenderer::drawGlobeDirectly(float x_rotation, float y_rotation, float 
     rotation_matrix = rotation_matrix * glm::rotate(glm::radians(x_rotation), glm::vec3(0.f,1.f,0.f));
 
     Color &ocean = m_ocean_color;
-    if(m_relief_texture_set) {
+    if(m_show_relief_texture) {
 
         m_shader_program_rectangle_relief->useProgram();
         m_shader_program_rectangle_relief->setMatrices(m_orthographic_view_projection_matrix,
@@ -352,7 +364,7 @@ void GlobeRenderer::drawGlobeDirectly(float x_rotation, float y_rotation, float 
 
     for(int i = 0; i < m_layers; i++) {
 
-        int triangleShaderId = m_relief_texture_set ? m_triangle_shader_relief_id : m_triangle_shader_id;
+        int triangleShaderId = m_show_relief_texture ? m_triangle_shader_relief_id : m_triangle_shader_id;
         AssetShader* triangleShader = m_asset_manager->getShader(triangleShaderId);
 
         triangleShader->useProgram();
@@ -435,7 +447,7 @@ void GlobeRenderer::updateCubeMap(unsigned int layer, Color background, bool rel
                     m_shader_program_rectangle_relief->getPositionAttributeLocation());
         }
 
-        int triangleShaderId = m_relief_texture_set ? m_triangle_shader_relief_id : m_triangle_shader_id;
+        int triangleShaderId = m_show_relief_texture ? m_triangle_shader_relief_id : m_triangle_shader_id;
         AssetShader* triangleShader = m_asset_manager->getShader(triangleShaderId);
 
         triangleShader->useProgram();

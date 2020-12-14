@@ -143,6 +143,10 @@ public class FragmentPlayerSelect extends Fragment implements PlayersAdapter.Pla
         if(correctAnswers != null) {
             achievementManager.setCorrectAnswersFromString(correctAnswers, false);
         }
+        else {
+            achievementManager.resetProgress(gameData.getQuestionManager());
+        }
+
         Integer maxScore = player.getIntegerData("max_score");
         if(maxScore != null) achievementManager.setMaxScore(maxScore, false);
 

@@ -50,6 +50,14 @@ extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_setR
     return;
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_showReliefTexture(
+        JNIEnv *env, jobject object) {
+
+    if(renderer) renderer->showReliefTexture();
+
+    return;
+}
+
 extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_hideReliefTexture(
         JNIEnv *env, jobject object) {
 
@@ -173,6 +181,13 @@ extern "C" JNIEXPORT jfloat JNICALL Java_com_shnoop_globequiz_RendererWrapper_ge
 
     if(renderer) return renderer->getFPS();
     return 0.f;
+}
+
+extern "C" JNIEXPORT jint JNICALL Java_com_shnoop_globequiz_RendererWrapper_getMaxTextureSize(
+        JNIEnv* env, jobject object){
+
+    if(renderer) return renderer->getMaxTextureSize();
+    return 0;
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_shnoop_globequiz_RendererWrapper_rotateTo(

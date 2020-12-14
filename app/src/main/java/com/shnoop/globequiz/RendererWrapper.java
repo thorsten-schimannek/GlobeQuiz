@@ -35,6 +35,7 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
     private boolean m_surface_created = false;
     private Stack<ShowAssetRequest> m_show_requests;
     private String m_relief_texture;
+    private boolean m_show_relief_texture;
 
     private OverScroller m_scroller;
 
@@ -62,6 +63,7 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
         while(!m_show_requests.empty()) m_show_requests.pop().show();
 
         if(m_relief_texture != null) setReliefTexture(m_relief_texture);
+        if(m_show_relief_texture) showRelief();
     }
 
     @Override
@@ -93,12 +95,19 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
     public void setRelief(String filename) {
 
         m_relief_texture = filename;
+        m_show_relief_texture = true;
         if(m_surface_created) setReliefTexture(filename);
+    }
+
+    public void showRelief() {
+
+        m_show_relief_texture = true;
+        if(m_surface_created) showReliefTexture();
     }
 
     public void hideRelief() {
 
-        m_relief_texture = null;
+        m_show_relief_texture = false;
         if(m_surface_created) hideReliefTexture();
     }
 
@@ -146,6 +155,7 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
     private native void showAsset(int layer, String filename,
                                   int id, double[] color);
     private native void setReliefTexture(String filename);
+    private native void showReliefTexture();
     private native void hideReliefTexture();
     public native int getRegionFromPoint(String filename, float x, float y);
     public native void loadAssets(AssetManager asset_manager);
@@ -162,4 +172,5 @@ public class RendererWrapper implements GLSurfaceView.Renderer {
     public native float getRotationLat();
     public native float getFPS();
     public native void rotateTo(float rx, float ry, float duration);
+    public native int getMaxTextureSize();
 }

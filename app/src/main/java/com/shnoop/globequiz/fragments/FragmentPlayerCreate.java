@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.shnoop.globequiz.MainActivity;
 import com.shnoop.globequiz.R;
 import com.shnoop.globequiz.customadapters.LanguagesAdapter;
+import com.shnoop.globequiz.gamedata.GameData;
 import com.shnoop.globequiz.gamedata.Language;
 import com.shnoop.globequiz.player.PlayerManager;
 
@@ -106,8 +107,12 @@ public class FragmentPlayerCreate extends Fragment {
                 playerManager.setPlayer(id);
                 playerManager.updatePreferences(getContext());
 
-                MainActivity.getGameData().setCurrentLanguage(getContext(),
+                GameData gameData = MainActivity.getGameData();
+
+                gameData.setCurrentLanguage(getContext(),
                         playerLanguage.getName());
+
+                gameData.getAchievementManager().resetProgress(gameData.getQuestionManager());
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(1).getId(),
