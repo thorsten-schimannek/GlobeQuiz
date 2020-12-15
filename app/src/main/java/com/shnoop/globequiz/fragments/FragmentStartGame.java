@@ -243,7 +243,7 @@ public class FragmentStartGame extends Fragment implements SeekBar.OnSeekBarChan
         transaction.commit();
     }
 
-    private int calculateProgress(int progress) { return (progress + 2) * 5; }
+    private int calculateProgress(int progress) { return (progress + 2) * 10; }
 
     public void onProgressChanged(SeekBar seekbar, int progress, boolean fromUser){
         m_number_of_questions_number_textview.setText(Integer.toString(calculateProgress(progress)));

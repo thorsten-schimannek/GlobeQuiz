@@ -346,7 +346,7 @@ void GlobeRenderer::drawGlobeDirectly(float x_rotation, float y_rotation, float 
         m_shader_program_rectangle_relief->setColor(glm::vec4(ocean.r, ocean.g, ocean.b, ocean.a));
         m_shader_program_rectangle_relief->setZoom(zoom);
         m_shader_program_rectangle_relief->setDirectRendering(true);
-        m_rectangle->draw(m_shader_program_rectangle->getPositionAttributeLocation());
+        m_rectangle->draw(m_shader_program_rectangle_relief->getPositionAttributeLocation());
     }
     else {
 
@@ -441,8 +441,8 @@ void GlobeRenderer::updateCubeMap(unsigned int layer, Color background, bool rel
             m_shader_program_rectangle_relief->setMatrices(
                     projection, cubemap.getCamera().getViewMatrix());
             m_shader_program_rectangle_relief->setColor(glm::vec4(bg.r, bg.g, bg.b, bg.a));
-            m_shader_program_rectangle->setZoom(1.f);
-            m_shader_program_rectangle->setDirectRendering(false);
+            m_shader_program_rectangle_relief->setZoom(1.f);
+            m_shader_program_rectangle_relief->setDirectRendering(false);
             m_rectangle->draw(
                     m_shader_program_rectangle_relief->getPositionAttributeLocation());
         }

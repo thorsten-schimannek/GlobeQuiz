@@ -9,15 +9,15 @@ public class Player {
 
     private static final List<Integer> m_required_experience = new ArrayList<Integer>() {{
         add(0);         // level  1
-        add(100);       // level  2
-        add(200);       // level  3
-        add(400);       // level  4
-        add(800);       // level  5
-        add(1600);      // level  6
-        add(3200);      // level  7
-        add(6400);      // level  8
-        add(12800);     // level  9
-        add(25000);     // level 10
+        add(400);       // level  2
+        add(800);       // level  3
+        add(1200);       // level  4
+        add(1600);       // level  5
+        add(3200);      // level  6
+        add(6400);      // level  7
+        add(12800);      // level  8
+        add(25000);     // level  9
+        add(40000);     // level 10
     }};
 
     private String m_name;
