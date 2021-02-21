@@ -105,6 +105,11 @@ public class GameData {
 
     public void loadLists(Context context) {
 
+        loadLists(context, false);
+    }
+
+    public void loadLists(Context context, boolean preserveAchievements) {
+
         String stringsFile = m_current_language.getStringsFile();
 
         String game_data_raw = loadFile(context, m_game_data_file);
@@ -116,7 +121,7 @@ public class GameData {
 
             loadRegionsList(game_data_json, strings_json);
             loadQuestionsList(game_data_json, strings_json);
-            loadAchievementList(game_data_json, strings_json);
+            loadAchievementList(game_data_json, strings_json, preserveAchievements);
             loadCountriesList(game_data_json, strings_json);
         }
         catch(JSONException exception){
@@ -165,7 +170,18 @@ public class GameData {
         }
     }
 
-    private void loadAchievementList(JSONObject game_data, JSONObject strings) throws JSONException {
+    private void loadAchievementList(JSONObject game_data, JSONObject strings,
+                                     boolean preserve_achievements) throws JSONException {
+
+        String correctAnswers = null;
+        int max_score = 0;
+        int max_correct = 0;
+        if (preserve_achievements && m_achievement_manager != null) {
+            correctAnswers = m_achievement_manager.getStringFromCorrectAnswers();
+            max_score = m_achievement_manager.getMaxScore();
+            max_correct = m_achievement_manager.getMaxCorrect();
+        }
+        else preserve_achievements = false;
 
         m_achievement_manager = new AchievementManager(m_question_manager);
 
@@ -177,11 +193,17 @@ public class GameData {
             m_achievement_manager.registerAchievement(
                     new Achievement(m_question_manager, achievement, strings));
         }
+
+        if (preserve_achievements) {
+            m_achievement_manager.setCorrectAnswersFromString(correctAnswers, false);
+            m_achievement_manager.setMaxScore(max_score, false);
+            m_achievement_manager.setMaxCorrect(max_correct, true);
+        }
     }
 
     private String loadFile(Context context, String filename) {
 
-        String content = "";
+        StringBuilder contentBuilder = new StringBuilder();
 
         AssetManager assets = context.getAssets();
 
@@ -197,7 +219,7 @@ public class GameData {
                 if (line == null) {
                     eof = true;
                 } else {
-                    content = content + line;
+                    contentBuilder.append(line);
                 }
             }
             buffer.close();
@@ -206,7 +228,7 @@ public class GameData {
             Log.e("@strings/log_tag", "Error loading data file.");
         }
 
-        return content;
+        return contentBuilder.toString();
     }
 
     public ArrayList<Language> getLanguages() { return m_languages; }
@@ -221,7 +243,7 @@ public class GameData {
             if (language.getName().equals(name)) {
 
                 m_current_language = language;
-                loadLists(context);
+                loadLists(context, true);
 
                 break;
             }
@@ -229,7 +251,5 @@ public class GameData {
 
         if(m_language_change_listener != null)
             m_language_change_listener.onLanguageChanged(m_current_language);
-
-        return;
     }
 }

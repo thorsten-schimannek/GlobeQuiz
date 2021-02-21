@@ -74,22 +74,31 @@ public class FragmentScore extends Fragment {
         Player player = player_manager.getCurrentPlayer();
 
         int experience_gained = MainActivity.getGameState().getExperience();
-        animateExperienceBar(player.getExperience(), experience_gained);
 
         AchievementManager achievementManager = MainActivity.getGameData().getAchievementManager();
 
-        if(m_game_registered) m_achievements = new ArrayList<>();
-        else {
+        if(!m_game_registered) {
+
+            animateExperienceBar(player.getExperience(), experience_gained, 2000);
+
+            player.addExperience(experience_gained);
+
             m_achievements = updateAchievements(achievementManager);
+
+            player.addStringData("correct", achievementManager.getStringFromCorrectAnswers());
+            player.addIntegerData("max_correct", achievementManager.getMaxCorrect());
+            player.addIntegerData("max_score", achievementManager.getMaxScore());
+
+            player_manager.updatePreferences(getContext());
+
             m_game_registered = true;
         }
+        else {
 
-        player.addExperience(experience_gained);
-        player.addStringData("correct", achievementManager.getStringFromCorrectAnswers());
-        player.addIntegerData("max_correct", achievementManager.getMaxCorrect());
-        player.addIntegerData("max_score", achievementManager.getMaxScore());
+            animateExperienceBar(player.getExperience(), 0, 0);
 
-        player_manager.updatePreferences(getContext());
+            m_achievements = new ArrayList<>();
+        }
 
         m_menu_button =  view.findViewById(R.id.backToMenuButton);
 
@@ -107,19 +116,16 @@ public class FragmentScore extends Fragment {
 
     private ArrayList<Achievement> updateAchievements(AchievementManager achievementManager) {
 
-        ArrayList<Achievement> new_achievements = achievementManager.registerGameResult(
+        return achievementManager.registerGameResult(
                 MainActivity.getGameState().getCorrect()
         );
-
-        return new_achievements;
     }
 
-    private void animateExperienceBar(int experienceOld, int experienceGained) {
+    private void animateExperienceBar(int experienceOld, int experienceGained, int duration) {
 
         ExperienceAnimator anim = new ExperienceAnimator(m_experience_textview,
                 m_experience_progress_bar, experienceGained, experienceOld);
-        if(!m_game_registered) anim.setDuration(2000);
-        else anim.setDuration(0);
+        anim.setDuration(duration);
 
         m_experience_progress_bar.startAnimation(anim);
     }
